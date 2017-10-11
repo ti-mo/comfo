@@ -28,23 +28,29 @@ type Packet struct {
 // MarshalPacket takes a Packet structure and converts it into wire protocol.
 func MarshalPacket(in Packet) (out []byte, err error) {
 
-	// TODO: detect duplicate 0x7's before reallocating target slice
+	// Save the original, unescaped length of the payload
 	dataLen := len(in.Data)
-	out = make([]byte, dataLen+8)
-	outLen := len(out)
+
+	// Escape the payload and re-calculate (wire) length
+	data := escapeData(in.Data)
+	dataLenWire := len(data)
+
+	// Make output slice with payload length + 8
+	out = make([]byte, dataLenWire+8)
+	outLen := dataLenWire + 8
 
 	copy(out[:pktStartLen], pktStart)                        // Preamble
 	copy(out[cmdOffset:lenOffset], []byte{0x00, in.Command}) // Command
 	out[lenOffset] = uint8(dataLen)                          // Payload length
-	copy(out[dataOffset:dataOffset+dataLen], in.Data)        // Payload
+	copy(out[dataOffset:dataOffset+dataLenWire], data)       // Payload
 
 	// Calculate checksum
-	cksum, err := calculateChecksum(out[cmdOffset : outLen-cksumOffset])
+	cksum, err := calculateChecksum(in.Command, uint8(dataLen), in.Data)
 	if err != nil {
 		return out, err
 	}
 
-	out[outLen-cksumOffset] = cksum
+	out[outLen-cksumOffset] = cksum      // Set checksum
 	copy(out[outLen-pktEndLen:], pktEnd) // End
 
 	return out, nil
@@ -58,52 +64,98 @@ func UnmarshalPacket(in []byte) (out Packet, err error) {
 		return out, errPktLen
 	}
 
-	// Offsets of this packet's start and end delimiters
-	var endOffset int = len(in) - pktEndLen
-
 	// Detect packet start and end
-	if !byteCmp(in[:cmdOffset], pktStart) || !byteCmp(in[endOffset:], pktEnd) {
+	if !byteCmp(in[:cmdOffset], pktStart) || !byteCmp(in[len(in)-pktEndLen:], pktEnd) {
 		return out, errDelim
 	}
 
+	// The command
+	var cmd uint8 = in[cmdOffset+1]
+
 	// The size of the payload
-	// TODO: Bump this by 1 for every double 0x07 BEFORE copying payload
 	var dataLen uint8 = in[lenOffset]
 
+	// Offset of the check
+	var endOffset int = len(in) - pktEndLen
+
+	// Get checksum from packet
+	var cksum uint8 = in[endOffset-1]
+
+	data := unescapeData(in[dataOffset : endOffset-1])
+
 	// Compare the expected size of the payload to the size of the packet.
-	// There are 8 non-payload bytes in a packet, so the size cannot exceed this.
-	if int(dataLen) > len(in)-8 {
+	// There are 8 non-payload bytes in a packet, so we can reliably calculate
+	// how many bytes the payload *should* be.
+	// Escaped 0x07's do not count towards dataLen, so needs to be unescaped first.
+	if int(dataLen) != len(data) {
 		return out, errPayloadSize
 	}
 
-	// Verify checksum, extract command and payload
-	if cksum, err := verifyChecksum(in); cksum && err == nil {
-		out.Command = in[cmdOffset+1] // Actual command is 2nd byte of command field
-		out.Data = in[dataOffset : dataOffset+int(dataLen)]
-	} else if !cksum {
-		return out, errVerifyChecksum
-	} else if err != nil {
+	check, err := verifyChecksum(cksum, cmd, dataLen, data)
+	if err != nil {
 		return out, errChecksum
+	} else if !check {
+		return out, errVerifyChecksum
 	}
+
+	// Extract command and payload
+	out.Command = cmd // Actual command is 2nd byte of command field
+	out.Data = data
 
 	return out, nil
 }
 
-// calculateChecksum calculates the checksum of a Packet byte string
-// excluding start and end.
-// TODO: Double 0x7
-func calculateChecksum(in []byte) (uint8, error) {
+// escapeData escapes 0x07 characters with 0x07 in a payload.
+func escapeData(in []byte) []byte {
 
-	// Empty packet without start, end and checksum has at least 3 bytes
-	if len(in) < 3 {
-		return 0, errTooShort
+	out := make([]byte, 0)
+
+	for _, v := range in {
+		// Append an extra 0x07 when a 0x07 is read
+		if v == 0x07 {
+			out = append(out, 0x07)
+		}
+
+		out = append(out, v)
 	}
+
+	return out
+}
+
+// unescapeData unescapes escape sequences of a wire-format payload.
+func unescapeData(in []byte) []byte {
+
+	out := make([]byte, 0)
+
+	for i := 0; i < len(in); i++ {
+		// Detect two successive 0x07
+		if in[i] == 0x07 && in[i+1] == 0x07 {
+			// Only append a single 0x07
+			out = append(out, 0x07)
+
+			// Advance the window twice when successfully unescaping
+			// to prevent re-evaluating on the second 0x07.
+			i++
+		} else {
+			out = append(out, in[i])
+		}
+	}
+
+	return out
+}
+
+// calculateChecksum calculates the checksum of a Packet command,
+// length and payload without (!) escaped 7s.
+func calculateChecksum(cmd uint8, dataLen uint8, data []byte) (uint8, error) {
 
 	// Allocate large enough int to hold our calculation
 	var tempSum uint64
 
+	tempSum += uint64(cmd)
+	tempSum += uint64(dataLen)
+
 	// Add all bytes together
-	for _, v := range in {
+	for _, v := range data {
 		tempSum += uint64(v)
 	}
 
@@ -114,10 +166,15 @@ func calculateChecksum(in []byte) (uint8, error) {
 	return uint8(tempSum), nil
 }
 
-// verifyChecksum computes a checksum over the packet excluding start and end.
-// TODO: Implement this
-func verifyChecksum(in []byte) (bool, error) {
-	return true, nil
+// verifyChecksum computes a checksum over the packet's cmd, dataLen field and payload.
+func verifyChecksum(in uint8, cmd uint8, dataLen uint8, data []byte) (bool, error) {
+
+	cksum, err := calculateChecksum(cmd, dataLen, data)
+	if err != nil {
+		return false, err
+	}
+
+	return cksum == in, nil
 }
 
 // byteCmp compares the value and length of two byte slices.
