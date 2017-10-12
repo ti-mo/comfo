@@ -1,2 +1,6 @@
 # IntelliJ
 .idea/
+
+# Generated
+coverage.out
+comfo
