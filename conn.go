@@ -87,7 +87,6 @@ func ReadPacket(conn io.Reader, timer *time.Timer, expect bool) (out Packet, err
 	if !expect {
 		return
 	}
-
 	// Read second escape sequence (start)
 	pr, err = ScanTimeout(scanner, timer)
 	if err != nil {
@@ -120,7 +119,9 @@ func ReadPacket(conn io.Reader, timer *time.Timer, expect bool) (out Packet, err
 	return
 }
 
-func Query(in Packet, conn io.ReadWriter) (out Packet, err error) {
+// WritePacket serializes a Packet into wire representation, wrapped
+// in start and end sequences, and writes to the given connection.
+func WritePacket(in Packet, conn io.Writer) (out bool, err error) {
 
 	// Get wire representation of the given Packet
 	pb, err := MarshalPacket(in)
@@ -128,12 +129,41 @@ func Query(in Packet, conn io.ReadWriter) (out Packet, err error) {
 		return out, errMarshalPacket
 	}
 
+	// Wrap start and end escape sequences
+	wr := append(pktStart, pb...)
+	wr = append(wr, pktEnd...)
+
+	// Write slice to connection
+	_, err = conn.Write(wr)
+	if err != nil {
+		return false, errWrite
+	}
+
+	return true, nil
+}
+
+// WriteAck writes an ACK response to a connection.
+func WriteAck(conn io.Writer) (out bool, err error) {
+	num, err := conn.Write(pktAck)
+	if err != nil {
+		return false, err
+	}
+
+	if num != len(pktAck) {
+		return false, errWrite
+	}
+
+	return
+}
+
+func Query(in Packet, conn io.ReadWriter) (out Packet, err error) {
+
 	// Take out lock - start critical section
 	pm.Lock()
 	defer pm.Unlock()
 
 	// Write the Packet to the connection
-	if _, err := conn.Write(pb); err != nil {
+	if _, err := WritePacket(in, conn); err != nil {
 		return out, err
 	}
 
@@ -147,7 +177,7 @@ func Query(in Packet, conn io.ReadWriter) (out Packet, err error) {
 	}
 
 	// Send ACK
-	conn.Write(pktAck)
+	WriteAck(conn)
 
 	// Return
 	return out, nil

@@ -13,4 +13,5 @@ var (
 	errTimeout        = errors.New("operation timed out")
 	errReadByte       = errors.New("unable to read byte from connection")
 	errScanInput      = errors.New("unexpected input while scanning for token")
+	errWrite          = errors.New("error writing packet to connection")
 )
