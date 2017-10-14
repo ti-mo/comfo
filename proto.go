@@ -10,19 +10,12 @@ var (
 	pktEnd   = []byte{esc, end}
 	pktAck   = []byte{esc, ack}
 
-	// byte 1-2 - start
-	pktStartLen = len(pktStart)
-	// byte -1, -2 - end
-	pktEndLen = len(pktEnd)
-
-	// byte 2-3 - command
-	cmdOffset = pktStartLen
-	// byte 4 - payload length
+	// byte 1-2 - command
+	cmdOffset = 0
+	// byte 3 - payload length
 	lenOffset = cmdOffset + 2
-	// byte 5-x - payload
+	// byte 4-x - payload
 	dataOffset = lenOffset + 1
-	// byte -3 (from end!) - checksum
-	cksumOffset = 3
 )
 
 type Packet struct {
@@ -46,11 +39,10 @@ func MarshalPacket(in Packet) (out []byte, err error) {
 	data := escapeData(in.Data)
 	dataLenWire := len(data)
 
-	// Make output slice with payload length + 8
-	out = make([]byte, dataLenWire+8)
-	outLen := dataLenWire + 8
+	// Make output slice with payload length + 4 (all other bytes)
+	out = make([]byte, dataLenWire+4)
+	outLen := dataLenWire + 4
 
-	copy(out[:pktStartLen], pktStart)                        // Preamble
 	copy(out[cmdOffset:lenOffset], []byte{0x00, in.Command}) // Command
 	out[lenOffset] = uint8(dataLen)                          // Payload length
 	copy(out[dataOffset:dataOffset+dataLenWire], data)       // Payload
@@ -61,23 +53,15 @@ func MarshalPacket(in Packet) (out []byte, err error) {
 		return out, err
 	}
 
-	out[outLen-cksumOffset] = cksum      // Set checksum
-	copy(out[outLen-pktEndLen:], pktEnd) // End
+	out[outLen-1] = cksum // Set checksum (last byte)
 
 	return out, nil
 }
 
 // UnmarshalPacket parses a byte slice of wire protocol into a Packet structure.
-// The byte slice must start with pktStart and end with pktEnd,
-// or the operation will fail.
 func UnmarshalPacket(in []byte) (out Packet, err error) {
-	if len(in) < 8 {
+	if len(in) < 4 {
 		return out, errPktLen
-	}
-
-	// Detect packet start and end
-	if !byteCmp(in[:cmdOffset], pktStart) || !byteCmp(in[len(in)-pktEndLen:], pktEnd) {
-		return out, errDelim
 	}
 
 	// The command
@@ -86,16 +70,13 @@ func UnmarshalPacket(in []byte) (out Packet, err error) {
 	// The size of the payload
 	var dataLen uint8 = in[lenOffset]
 
-	// Offset of the check
-	var endOffset int = len(in) - pktEndLen
+	// Get checksum from packet (last byte)
+	var cksum uint8 = in[len(in)-1]
 
-	// Get checksum from packet
-	var cksum uint8 = in[endOffset-1]
-
-	data := unescapeData(in[dataOffset : endOffset-1])
+	data := unescapeData(in[dataOffset : len(in)-1])
 
 	// Compare the expected size of the payload to the size of the packet.
-	// There are 8 non-payload bytes in a packet, so we can reliably calculate
+	// There are 4 non-payload bytes in a packet, so we can reliably calculate
 	// how many bytes the payload *should* be.
 	// Escaped 0x07's do not count towards dataLen, so needs to be unescaped first.
 	if int(dataLen) != len(data) {
