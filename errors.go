@@ -9,4 +9,8 @@ var (
 	errVerifyChecksum = errors.New("error verifying checksum of the payload")
 	errChecksum       = errors.New("error calculating checksum")
 	errTooShort       = errors.New("input was too short")
+	errMarshalPacket  = errors.New("encountered error marshaling packet")
+	errTimeout        = errors.New("operation timed out")
+	errReadByte       = errors.New("unable to read byte from connection")
+	errScanInput      = errors.New("unexpected input while scanning for token")
 )

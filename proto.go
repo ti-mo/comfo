@@ -1,9 +1,14 @@
 package main
 
 var (
-	ack      = []byte{0x07, 0xF3}
-	pktStart = []byte{0x07, 0xF0}
-	pktEnd   = []byte{0x07, 0x0F}
+	esc   byte = 0x07
+	ack   byte = 0xF3
+	start byte = 0xF0
+	end   byte = 0x0F
+
+	pktStart = []byte{esc, start}
+	pktEnd   = []byte{esc, end}
+	pktAck   = []byte{esc, ack}
 
 	// byte 1-2 - start
 	pktStartLen = len(pktStart)
@@ -21,8 +26,14 @@ var (
 )
 
 type Packet struct {
+	// Command type or response code
 	Command uint8
-	Data    []byte
+
+	// Payload byte slice
+	Data []byte
+
+	// Whether to expect a response
+	Expect bool
 }
 
 // MarshalPacket takes a Packet structure and converts it into wire protocol.
