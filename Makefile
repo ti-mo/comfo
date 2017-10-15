@@ -39,11 +39,14 @@ clean_release:
 test:
 	go test $(PACKAGES)
 
-.ONESHELL:
 .PHONY: cover
 cover:
 	go test -coverprofile=coverage.out -covermode=count
 	go tool cover -func=coverage.out
+
+.PHONY: coverhtml
+coverhtml: cover
+	go tool cover -html=coverage.out
 
 .ONESHELL:
 .PHONY: gox
