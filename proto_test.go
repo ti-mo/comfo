@@ -5,6 +5,16 @@ import (
 	"testing"
 )
 
+func genBytes(len int) (out []byte) {
+	out = make([]byte, len)
+
+	for i := 0; i < len; i++ {
+		out[i] = uint8(i)
+	}
+
+	return
+}
+
 // End-to-end unmarshal-marshal tests.
 func TestFull(t *testing.T) {
 	tests := []struct {
@@ -117,6 +127,40 @@ func TestUnmarshalPacket(t *testing.T) {
 
 			if want, got := tt.pkt, pkt; !reflect.DeepEqual(want, got) {
 				t.Fatalf("unexpected packet unmarshal result:\n- want: %v\n-  got: %v",
+					want, got)
+			}
+		})
+	}
+}
+
+// Unmarshal-specific corner cases and error checking.
+func TestMarshalPacket(t *testing.T) {
+	tests := []struct {
+		name string
+		pkt  Packet
+		b    []byte
+		err  error
+	}{
+		{
+			name: "input too long",
+			pkt:  Packet{Data: genBytes(256)},
+			err:  errTooLong,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			// Attempt re-marshal into binary form
+			b, err := MarshalPacket(tt.pkt)
+
+			if want, got := tt.err, err; want != got {
+				t.Fatalf("unexpected error marshaling packet:\n- want: %v\n-  got: %v",
+					want, got)
+			}
+
+			if want, got := tt.b, b; !reflect.DeepEqual(want, got) {
+				t.Fatalf("unexpected packet marshal result:\n- want: %v\n-  got: %v",
 					want, got)
 			}
 		})

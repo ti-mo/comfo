@@ -41,6 +41,11 @@ func MarshalPacket(in Packet) (out []byte, err error) {
 	// Save the original, unescaped length of the payload
 	dataLen := len(in.Data)
 
+	// Packet length specifier is one byte long, so 255 is the maximum packet size.
+	if dataLen > 255 {
+		return nil, errTooLong
+	}
+
 	// Escape the payload and re-calculate (wire) length
 	data := escapeData(in.Data)
 	dataLenWire := len(data)
