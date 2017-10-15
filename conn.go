@@ -176,6 +176,11 @@ func Query(in Packet, conn io.ReadWriter) (out Packet, err error) {
 		return out, err
 	}
 
+	// Check for the correct response command (request command + 1)
+	if in.Expect && out.Command != in.Command+1 {
+		return out, errInvalidResponse
+	}
+
 	// Send ACK
 	_, err = WriteAck(conn)
 	if err != nil {
