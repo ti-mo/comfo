@@ -53,13 +53,8 @@ func MarshalPacket(in Packet) (out []byte, err error) {
 	out[lenOffset] = uint8(dataLen)                          // Payload length
 	copy(out[dataOffset:dataOffset+dataLenWire], data)       // Payload
 
-	// Calculate checksum
-	cksum, err := calculateChecksum(in.Command, uint8(dataLen), in.Data)
-	if err != nil {
-		return out, err
-	}
-
-	out[outLen-1] = cksum // Set checksum (last byte)
+	// Set checksum (last byte)
+	out[outLen-1] = calculateChecksum(in.Command, uint8(dataLen), in.Data)
 
 	return out, nil
 }
@@ -89,10 +84,7 @@ func UnmarshalPacket(in []byte) (out Packet, err error) {
 		return out, errPayloadSize
 	}
 
-	check, err := verifyChecksum(cksum, cmd, dataLen, data)
-	if err != nil {
-		return out, errChecksum
-	} else if !check {
+	if !verifyChecksum(cksum, cmd, dataLen, data) {
 		return out, errVerifyChecksum
 	}
 
@@ -127,13 +119,16 @@ func unescapeData(in []byte) []byte {
 
 	for i := 0; i < len(in); i++ {
 		// Detect two successive 0x07
-		if in[i] == 0x07 && in[i+1] == 0x07 {
-			// Only append a single 0x07
-			out = append(out, 0x07)
+		if in[i] == 0x07 {
+			// 0x07 lookahead with bounds check
+			if i+1 < len(in) && in[i+1] == 0x07 {
+				// Only append a single 0x07
+				out = append(out, 0x07)
 
-			// Advance the window twice when successfully unescaping
-			// to prevent re-evaluating on the second 0x07.
-			i++
+				// Advance the window twice when successfully unescaping
+				// to prevent re-evaluating on the second 0x07.
+				i++
+			}
 		} else {
 			out = append(out, in[i])
 		}
@@ -144,7 +139,7 @@ func unescapeData(in []byte) []byte {
 
 // calculateChecksum calculates the checksum of a Packet command,
 // length and payload without (!) escaped 7s.
-func calculateChecksum(cmd uint8, dataLen uint8, data []byte) (uint8, error) {
+func calculateChecksum(cmd uint8, dataLen uint8, data []byte) uint8 {
 
 	// Allocate large enough int to hold our calculation
 	var tempSum uint64
@@ -161,31 +156,11 @@ func calculateChecksum(cmd uint8, dataLen uint8, data []byte) (uint8, error) {
 	tempSum += 173
 
 	// Truncate the sum to a single byte
-	return uint8(tempSum), nil
+	return uint8(tempSum)
 }
 
 // verifyChecksum computes a checksum over the packet's cmd, dataLen field and payload.
-func verifyChecksum(in uint8, cmd uint8, dataLen uint8, data []byte) (bool, error) {
+func verifyChecksum(in uint8, cmd uint8, dataLen uint8, data []byte) bool {
 
-	cksum, err := calculateChecksum(cmd, dataLen, data)
-	if err != nil {
-		return false, err
-	}
-
-	return cksum == in, nil
-}
-
-// byteCmp compares the value and length of two byte slices.
-func byteCmp(a []byte, b []byte) bool {
-	if len(a) != len(b) {
-		return false
-	}
-
-	for i, v := range a {
-		if v != b[i] {
-			return false
-		}
-	}
-
-	return true
+	return in == calculateChecksum(cmd, dataLen, data)
 }
