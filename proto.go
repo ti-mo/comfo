@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 var (
 	esc   byte = 0x07
 	ack   byte = 0xF3
@@ -27,6 +29,10 @@ type Packet struct {
 
 	// Whether to expect a response
 	Expect bool
+}
+
+func (p Packet) String() string {
+	return fmt.Sprintf("<Packet: %x %v, %v>", p.Command, p.Data, p.Expect)
 }
 
 // MarshalPacket takes a Packet structure and converts it into wire protocol.
