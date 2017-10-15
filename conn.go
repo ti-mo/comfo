@@ -150,7 +150,7 @@ func WriteAck(conn io.Writer) (out bool, err error) {
 	}
 
 	if num != len(pktAck) {
-		return false, errWrite
+		return false, errAck
 	}
 
 	return
@@ -177,8 +177,11 @@ func Query(in Packet, conn io.ReadWriter) (out Packet, err error) {
 	}
 
 	// Send ACK
-	WriteAck(conn)
+	_, err = WriteAck(conn)
+	if err != nil {
+		return out, err
+	}
 
-	// Return
+	// Return query result
 	return out, nil
 }
