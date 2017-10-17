@@ -21,4 +21,5 @@ var (
 	errTooLow          = errors.New("value is too low")
 	errRequestType     = errors.New("unknown request type")
 	errResponseType    = errors.New("unknown response type")
+	errDecodeNil       = errors.New("attempting to decode nil Packet")
 )

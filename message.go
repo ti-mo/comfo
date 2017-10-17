@@ -61,6 +61,11 @@ func EncodeSetRequest(in SetRequest) (out Packet, err error) {
 // for incoming command types.
 func DecodeResponse(in Packet) (out Response, err error) {
 
+	// Error out if we know the response cannot be decoded
+	if in.Command == 0 {
+		return nil, errDecodeNil
+	}
+
 	// Look up the response type in the ResponseType map,
 	// do not unmarshal if the entry does not exist.
 	out = ResponseType[in.Command]
