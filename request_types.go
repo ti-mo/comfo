@@ -34,3 +34,21 @@ func (q setSpeed) MarshalBinary() (out []byte, err error) {
 
 	return []byte{q.Speed}, nil
 }
+
+// SetRequest setComfort controls the comfort temperature
+// of the unit. This is the point at which the heat exchanger
+// will recover outgoing heat into the incoming air stream.
+type setComfort struct {
+	Temperature temperature
+}
+
+func (q setComfort) Type() uint8 { return 0xD3 }
+func (q setComfort) MarshalBinary() (out []byte, err error) {
+
+	t, err := q.Temperature.MarshalBinary()
+	if err != nil {
+		return
+	}
+
+	return []byte{t}, nil
+}
