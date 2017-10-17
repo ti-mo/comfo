@@ -17,4 +17,8 @@ var (
 	errWrite           = errors.New("error writing packet to connection")
 	errAck             = errors.New("error writing ACK to connection")
 	errInvalidResponse = errors.New("unexpected response type")
+	errTooHigh         = errors.New("value too high")
+	errTooLow          = errors.New("value is too low")
+	errRequestType     = errors.New("unknown request type")
+	errResponseType    = errors.New("unknown response type")
 )

@@ -8,10 +8,12 @@ import (
 )
 
 var (
-	// Serial connection Mutex
+	// Package-wide serial connection Mutex
 	pm = &sync.Mutex{}
 )
 
+// WaitTimeout takes a channel and a timer. If the channel reads before
+// the timer expires, true is returned. If the timer expires, false is returned.
 func WaitTimeout(wait <-chan bool, timeout *time.Timer) (success bool, err error) {
 	select {
 	case result := <-wait:
@@ -43,6 +45,8 @@ func ScanTimeout(scanner *bufio.Scanner, timer *time.Timer) (out []byte, err err
 	return
 }
 
+// ReadPacket scans a connection for 3 escape sequences - ack, start and end
+// A Packet structure is extracted from the connection.
 func ReadPacket(conn io.Reader, timer *time.Timer, expect bool) (out Packet, err error) {
 
 	// Read the first byte in the stream
@@ -79,11 +83,12 @@ func ReadPacket(conn io.Reader, timer *time.Timer, expect bool) (out Packet, err
 		return out, err
 	}
 
+	// Found bytes before ACK
 	if len(pr) != 0 {
 		return out, errScanInput
 	}
 
-	// Return if we're not expecting data (only ACK)
+	// We're not expecting data (only ACK), return
 	if !expect {
 		return
 	}
@@ -93,6 +98,7 @@ func ReadPacket(conn io.Reader, timer *time.Timer, expect bool) (out Packet, err
 		return out, err
 	}
 
+	// Found bytes between ACK and packet start
 	if len(pr) != 0 {
 		return out, errScanInput
 	}
@@ -156,7 +162,8 @@ func WriteAck(conn io.Writer) (out bool, err error) {
 	return
 }
 
-func Query(in Packet, conn io.ReadWriter) (out Packet, err error) {
+// QueryPacket writes a Packet to a connection
+func QueryPacket(in Packet, conn io.ReadWriter) (out Packet, err error) {
 
 	// Take out lock - start critical section
 	pm.Lock()
