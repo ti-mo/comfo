@@ -141,3 +141,16 @@ func (t *temperature) UnmarshalBinary(in byte) {
 	*t = temperature(in/2) - 20
 	return
 }
+
+// LeftPad32 pads a byte sequence to 32 bytes on the left.
+func LeftPad32(in []byte) (out []byte) {
+
+	if len(in) > 4 {
+		panic("input length to LeftPad32 exceeds 4 bytes")
+	}
+
+	left := make([]byte, 4-len(in))
+	out = append(left, in...)
+
+	return
+}

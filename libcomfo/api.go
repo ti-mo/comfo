@@ -25,3 +25,11 @@ func GetBypass(conn io.ReadWriter) (bypass Bypass, err error) {
 
 	return *resp.(*Bypass), err
 }
+
+// GetHours gets the bypass information from the unit.
+func GetHours(conn io.ReadWriter) (hours Hours, err error) {
+
+	resp, err := getQuery(getHours, conn)
+
+	return *resp.(*Hours), err
+}

@@ -1,9 +1,14 @@
 package libcomfo
 
+import (
+	"encoding/binary"
+)
+
 var (
 	// Map incoming response types to their internal structs
 	ResponseType = map[uint8]Response{
 		0xD2: &Temps{},
+		0xDE: &Hours{},
 		0xE0: &Bypass{},
 	}
 )
@@ -62,6 +67,39 @@ func (b *Bypass) UnmarshalBinary(in []byte) error {
 	b.Level = in[3]
 	b.Correction = in[4]
 	b.SummerMode = in[6] == 1
+
+	return nil
+}
+
+// Type Hours holds the amount of working hours
+// for every moving component in the unit.
+type Hours struct {
+	FanAway      uint32
+	FanLow       uint32
+	FanMid       uint32
+	FanHigh      uint32
+	FrostProtect uint16
+	Reheating    uint16
+	BypassOpen   uint16
+	Filter       uint16
+}
+
+// UnmarshalBinary unmarshals the binary representation
+// into an Hours structure.
+func (h *Hours) UnmarshalBinary(in []byte) error {
+
+	if len(in) != 20 {
+		return errPktLen
+	}
+
+	h.FanAway = binary.BigEndian.Uint32(LeftPad32(in[0:3]))
+	h.FanLow = binary.BigEndian.Uint32(LeftPad32(in[3:6]))
+	h.FanMid = binary.BigEndian.Uint32(LeftPad32(in[6:9]))
+	h.FrostProtect = binary.BigEndian.Uint16(in[9:11])
+	h.Reheating = binary.BigEndian.Uint16(in[11:13])
+	h.BypassOpen = binary.BigEndian.Uint16(in[13:15])
+	h.Filter = binary.BigEndian.Uint16(in[15:17])
+	h.FanHigh = binary.BigEndian.Uint32(LeftPad32(in[17:20]))
 
 	return nil
 }

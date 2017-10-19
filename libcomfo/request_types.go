@@ -12,6 +12,7 @@ type getRequest uint8
 const (
 	getTemps  getRequest = 0xD1 // getTemps gets all available temperatures from the unit.
 	getBypass            = 0xDF // getBypass gets heat exchanger information from the unit.
+	getHours             = 0xDD // getHours gets the working hours for moving parts of the unit.
 )
 
 //
