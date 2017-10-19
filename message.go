@@ -15,8 +15,8 @@ type Response interface {
 }
 
 // EncodeRequestCommand generates a Packet with an empty payload
-// given the GetRequest command type. A response payload is expected.
-func EncodeGetRequest(gr GetRequest) (out Packet) {
+// given the getRequest command type. A response payload is expected.
+func EncodeGetRequest(gr getRequest) (out Packet) {
 
 	out.Command = uint8(gr)
 

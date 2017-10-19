@@ -1,8 +1,8 @@
 package main
 
-// Type GetRequest is an enum holding the command types
+// Type getRequest is an enum holding the command types
 // of all Get operations.
-type GetRequest uint8
+type getRequest uint8
 
 //
 // get* requests
@@ -10,8 +10,8 @@ type GetRequest uint8
 //
 
 const (
-	GetTemps  GetRequest = 0xD1 // getTemps gets all available temperatures from the unit.
-	GetBypass            = 0xDF // getBypass gets heat exchanger information from the unit.
+	getTemps  getRequest = 0xD1 // getTemps gets all available temperatures from the unit.
+	getBypass            = 0xDF // getBypass gets heat exchanger information from the unit.
 )
 
 //

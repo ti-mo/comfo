@@ -162,7 +162,10 @@ func WriteAck(conn io.Writer) (out bool, err error) {
 	return
 }
 
-// QueryPacket writes a Packet to a connection
+// QueryPacket locks the package-wide mutex, writes the given packet to
+// the connection, starts the timeout timer, reads the response back from
+// the connection, validates the response sequence (command) number and sends
+// an ACK to the remote.
 func QueryPacket(in Packet, conn io.ReadWriter) (out Packet, err error) {
 
 	// Take out lock - start critical section
