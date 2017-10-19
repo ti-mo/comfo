@@ -1,4 +1,4 @@
-package main
+package libcomfo
 
 // Type getRequest is an enum holding the command types
 // of all Get operations.

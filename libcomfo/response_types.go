@@ -1,4 +1,4 @@
-package main
+package libcomfo
 
 var (
 	// Map incoming response types to their internal structs
