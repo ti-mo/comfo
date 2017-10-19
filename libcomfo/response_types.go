@@ -2,16 +2,42 @@ package libcomfo
 
 import (
 	"encoding/binary"
+	"strings"
 )
 
 var (
 	// Map incoming response types to their internal structs
 	ResponseType = map[uint8]Response{
+		0x68: &BootInfo{},
+		0x6A: &BootInfo{},
 		0xD2: &Temps{},
 		0xDE: &Hours{},
 		0xE0: &Bypass{},
 	}
 )
+
+// Type BootInfo holds bootloader/firmware-related info.
+type BootInfo struct {
+	MajorVersion uint8
+	MinorVersion uint8
+	BetaVersion  uint8
+	DeviceName   string
+}
+
+// UnmarshalBinary unmarshals the binary representation
+// into a BootInfo structure. Whitespace is trimmed from DeviceName.
+func (bi *BootInfo) UnmarshalBinary(in []byte) error {
+	if len(in) != 13 {
+		return errPktLen
+	}
+
+	bi.MajorVersion = in[1]
+	bi.MinorVersion = in[2]
+	bi.BetaVersion = in[3]
+	bi.DeviceName = strings.TrimSpace(string(in[3:13]))
+
+	return nil
+}
 
 // Type Temps holds the various temperature readings
 // from the ventilation unit.

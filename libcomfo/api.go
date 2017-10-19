@@ -33,3 +33,16 @@ func GetHours(conn io.ReadWriter) (hours Hours, err error) {
 
 	return *resp.(*Hours), err
 }
+
+func GetBootloader(conn io.ReadWriter) (bi BootInfo, err error) {
+	resp, err := getQuery(getBootloader, conn)
+
+	return *resp.(*BootInfo), err
+}
+
+func GetFirmware(conn io.ReadWriter) (bi BootInfo, err error) {
+
+	resp, err := getQuery(getFirmware, conn)
+
+	return *resp.(*BootInfo), err
+}
