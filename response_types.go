@@ -8,7 +8,7 @@ var (
 	}
 )
 
-// Temps holds the various temperature readings
+// Type Temps holds the various temperature readings
 // from the ventilation unit.
 type Temps struct {
 	Comfort     temperature
@@ -21,8 +21,8 @@ type Temps struct {
 	KitchenHood temperature
 }
 
-// UnmarshalBinary unmarshals a Temps structure to the binary
-// representation. Fixed length is 9 bytes.
+// UnmarshalBinary unmarshals the binary representation
+// into a Temps structure. Fixed length is 9 bytes.
 func (t *Temps) UnmarshalBinary(in []byte) error {
 
 	if len(in) != 9 {
@@ -41,6 +41,8 @@ func (t *Temps) UnmarshalBinary(in []byte) error {
 	return nil
 }
 
+// Type Bypass holds the information about
+// the unit's heat exchanger bypass valve.
 type Bypass struct {
 	Factor     uint8
 	Level      uint8
@@ -48,7 +50,13 @@ type Bypass struct {
 	SummerMode bool
 }
 
+// UnmarshalBinary unmarshals the binary representation
+// into a Bypass structure.
 func (b *Bypass) UnmarshalBinary(in []byte) error {
+
+	if len(in) != 7 {
+		return errPktLen
+	}
 
 	b.Factor = in[2]
 	b.Level = in[3]
