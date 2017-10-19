@@ -1,5 +1,7 @@
 package main
 
+import "io"
+
 // SetRequest is the interface that set requests to the unit
 // must satisfy, as they need to be binary-encoded over the wire.
 type SetRequest interface {
@@ -74,6 +76,39 @@ func DecodeResponse(in Packet) (out Response, err error) {
 	}
 
 	err = out.UnmarshalBinary(in.Data)
+
+	return
+}
+
+// setQuery is the end-to-end glue method for encoding a setRequest,
+// sending it and returning the success status.
+func setQuery(in SetRequest, conn io.ReadWriter) (err error) {
+
+	sr, err := EncodeSetRequest(in)
+	if err != nil {
+		return
+	}
+
+	_, err = QueryPacket(sr, conn)
+
+	return
+}
+
+// getQuery is the end-to-end glue method for encoding a getRequest,
+// sending it and returning a Response.
+func getQuery(in getRequest, conn io.ReadWriter) (resp Response, err error) {
+
+	gr := EncodeGetRequest(in)
+	if err != nil {
+		return
+	}
+
+	qp, err := QueryPacket(gr, conn)
+	if err != nil {
+		return
+	}
+
+	resp, err = DecodeResponse(qp)
 
 	return
 }
