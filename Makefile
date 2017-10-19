@@ -39,14 +39,28 @@ clean_release:
 test:
 	go test $(PACKAGES)
 
-.PHONY: cover
-cover:
-	go test -coverprofile=coverage.out -covermode=count
-	go tool cover -func=coverage.out
+cover: coverage-all.out
+
+.ONESHELLL:
+coverage-all.out:
+	@echo "mode: count" > coverage-all.out
+
+	# Run test suite for all (sub)packages found in the repository
+	for fn in ${PACKAGES}; do
+		go test -coverprofile=coverage.out -covermode=count "$$fn"
+
+		# Aggregate the coverage reports for all packages
+		if [ -f coverage.out ]; then
+			tail -n +2 coverage.out >> coverage-all.out
+			rm coverage.out
+		fi
+	done
+
+	go tool cover -func=coverage-all.out
 
 .PHONY: coverhtml
-coverhtml: cover
-	go tool cover -html=coverage.out
+coverhtml: coverage-all.out
+	go tool cover -html=coverage-all.out
 
 .ONESHELL:
 .PHONY: gox
