@@ -21,7 +21,7 @@ func GetTemperatures(conn io.ReadWriter) (temps Temps, err error) {
 
 	resp, err := getQuery(getTemps, conn)
 	if err != nil {
-		return Temps{}, err
+		return
 	}
 
 	return *resp.(*Temps), err
@@ -32,21 +32,21 @@ func GetBypass(conn io.ReadWriter) (bypass Bypass, err error) {
 
 	resp, err := getQuery(getBypass, conn)
 	if err != nil {
-		return Bypass{}, err
+		return
 	}
 
 	return *resp.(*Bypass), err
 }
 
-// GetVentilators gets the speeds of the unit's ventilators.
-func GetVentilators(conn io.ReadWriter) (vents Ventilators, err error) {
+// GetFans gets the speeds of the unit's ventilators.
+func GetFans(conn io.ReadWriter) (fans Fans, err error) {
 
-	resp, err := getQuery(getVentilators, conn)
+	resp, err := getQuery(getFans, conn)
 	if err != nil {
-		return Ventilators{}, err
+		return
 	}
 
-	return *resp.(*Ventilators), err
+	return *resp.(*Fans), err
 }
 
 // GetHours gets the operating hours for all moving parts in the unit.
@@ -54,7 +54,7 @@ func GetHours(conn io.ReadWriter) (hours Hours, err error) {
 
 	resp, err := getQuery(getHours, conn)
 	if err != nil {
-		return Hours{}, err
+		return
 	}
 
 	return *resp.(*Hours), err
@@ -65,7 +65,7 @@ func GetBootloader(conn io.ReadWriter) (bi BootInfo, err error) {
 
 	resp, err := getQuery(getBootloader, conn)
 	if err != nil {
-		return BootInfo{}, err
+		return
 	}
 
 	return *resp.(*BootInfo), err
@@ -76,19 +76,19 @@ func GetFirmware(conn io.ReadWriter) (bi BootInfo, err error) {
 
 	resp, err := getQuery(getFirmware, conn)
 	if err != nil {
-		return BootInfo{}, err
+		return
 	}
 
 	return *resp.(*BootInfo), err
 }
 
-// GetVentProfiles gets the fan profiles for each ventilation level.
-func GetVentProfiles(conn io.ReadWriter) (vp VentProfiles, err error) {
+// GetFanProfiles gets the fan profiles for each ventilation level.
+func GetFanProfiles(conn io.ReadWriter) (fp FanProfiles, err error) {
 
-	resp, err := getQuery(getVentProfiles, conn)
+	resp, err := getQuery(getFanProfiles, conn)
 	if err != nil {
-		return VentProfiles{}, err
+		return
 	}
 
-	return *resp.(*VentProfiles), err
+	return *resp.(*FanProfiles), err
 }

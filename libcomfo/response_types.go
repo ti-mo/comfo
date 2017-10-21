@@ -8,10 +8,10 @@ import (
 var (
 	// Map incoming response types to their internal structs
 	ResponseType = map[uint8]Response{
-		0x0C: &Ventilators{},
+		0x0C: &Fans{},
 		0x68: &BootInfo{},
 		0x6A: &BootInfo{},
-		0xCE: &VentProfiles{},
+		0xCE: &FanProfiles{},
 		0xD2: &Temps{},
 		0xDE: &Hours{},
 		0xE0: &Bypass{},
@@ -132,17 +132,17 @@ func (h *Hours) UnmarshalBinary(in []byte) error {
 	return nil
 }
 
-// Type Ventilators holds the unit's fan percentage and speeds.
-type Ventilators struct {
-	InPercent  uint8
-	OutPercent uint8
-	InSpeed    uint16
-	OutSpeed   uint16
+// Type Fans holds the unit's fan percentage and speeds.
+type Fans struct {
+	InPercent  uint8  `json:"in_percent"`
+	OutPercent uint8  `json:"out_percent"`
+	InSpeed    uint16 `json:"in_speed"`
+	OutSpeed   uint16 `json:"out_speed"`
 }
 
 // UnmarshalBinary unmarshals the binary representation
-// into a Ventilators structure.
-func (v *Ventilators) UnmarshalBinary(in []byte) error {
+// into a Fans structure.
+func (v *Fans) UnmarshalBinary(in []byte) error {
 
 	if len(in) != 6 {
 		return errPktLen
@@ -157,28 +157,28 @@ func (v *Ventilators) UnmarshalBinary(in []byte) error {
 	return nil
 }
 
-// Type VentProfiles holds the fen profiles (in percent)
+// Type FanProfiles holds the fan profiles (in percent)
 // for every ventilation level.
-type VentProfiles struct {
-	OutAway uint8
-	OutLow  uint8
-	OutMid  uint8
-	OutHigh uint8
+type FanProfiles struct {
+	OutAway uint8 `json:"out_away"`
+	OutLow  uint8 `json:"out_low"`
+	OutMid  uint8 `json:"out_mid"`
+	OutHigh uint8 `json:"out_high"`
 
-	InFanActive bool
-	InAway      uint8
-	InLow       uint8
-	InMid       uint8
-	InHigh      uint8
+	InFanActive bool  `json:"in_fan_active"`
+	InAway      uint8 `json:"in_away"`
+	InLow       uint8 `json:"in_low"`
+	InMid       uint8 `json:"in_mid"`
+	InHigh      uint8 `json:"in_high"`
 
-	CurrentOut   uint8
-	CurrentIn    uint8
-	CurrentLevel uint8
+	CurrentOut   uint8 `json:"current_out"`
+	CurrentIn    uint8 `json:"current_in"`
+	CurrentLevel uint8 `json:"current_level"`
 }
 
 // UnmarshalBinary unmarshals the binary representation
-// into a VentProfiles structure.
-func (vp *VentProfiles) UnmarshalBinary(in []byte) error {
+// into a FanProfiles structure.
+func (vp *FanProfiles) UnmarshalBinary(in []byte) error {
 
 	if len(in) != 14 {
 		return errPktLen
