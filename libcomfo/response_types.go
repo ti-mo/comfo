@@ -120,14 +120,14 @@ func (h *Hours) UnmarshalBinary(in []byte) error {
 		return errPktLen
 	}
 
-	h.FanAway = binary.BigEndian.Uint32(LeftPad32(in[0:3]))
-	h.FanLow = binary.BigEndian.Uint32(LeftPad32(in[3:6]))
-	h.FanMid = binary.BigEndian.Uint32(LeftPad32(in[6:9]))
+	h.FanAway = binary.BigEndian.Uint32(leftPad32(in[0:3]))
+	h.FanLow = binary.BigEndian.Uint32(leftPad32(in[3:6]))
+	h.FanMid = binary.BigEndian.Uint32(leftPad32(in[6:9]))
 	h.FrostProtect = binary.BigEndian.Uint16(in[9:11])
 	h.Reheating = binary.BigEndian.Uint16(in[11:13])
 	h.BypassOpen = binary.BigEndian.Uint16(in[13:15])
 	h.Filter = binary.BigEndian.Uint16(in[15:17])
-	h.FanHigh = binary.BigEndian.Uint32(LeftPad32(in[17:20]))
+	h.FanHigh = binary.BigEndian.Uint32(leftPad32(in[17:20]))
 
 	return nil
 }
