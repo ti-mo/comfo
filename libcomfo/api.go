@@ -20,6 +20,9 @@ func SetSpeed(val uint8, conn io.ReadWriter) (err error) {
 func GetTemperatures(conn io.ReadWriter) (temps Temps, err error) {
 
 	resp, err := getQuery(getTemps, conn)
+	if err != nil {
+		return Temps{}, err
+	}
 
 	return *resp.(*Temps), err
 }
@@ -28,6 +31,9 @@ func GetTemperatures(conn io.ReadWriter) (temps Temps, err error) {
 func GetBypass(conn io.ReadWriter) (bypass Bypass, err error) {
 
 	resp, err := getQuery(getBypass, conn)
+	if err != nil {
+		return Bypass{}, err
+	}
 
 	return *resp.(*Bypass), err
 }
@@ -36,12 +42,18 @@ func GetBypass(conn io.ReadWriter) (bypass Bypass, err error) {
 func GetHours(conn io.ReadWriter) (hours Hours, err error) {
 
 	resp, err := getQuery(getHours, conn)
+	if err != nil {
+		return Hours{}, err
+	}
 
 	return *resp.(*Hours), err
 }
 
 func GetBootloader(conn io.ReadWriter) (bi BootInfo, err error) {
 	resp, err := getQuery(getBootloader, conn)
+	if err != nil {
+		return BootInfo{}, err
+	}
 
 	return *resp.(*BootInfo), err
 }
@@ -49,6 +61,9 @@ func GetBootloader(conn io.ReadWriter) (bi BootInfo, err error) {
 func GetFirmware(conn io.ReadWriter) (bi BootInfo, err error) {
 
 	resp, err := getQuery(getFirmware, conn)
+	if err != nil {
+		return BootInfo{}, err
+	}
 
 	return *resp.(*BootInfo), err
 }
