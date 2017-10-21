@@ -10,6 +10,12 @@ func SetComfort(val uint8, conn io.ReadWriter) (err error) {
 	return setQuery(setComfort{Temperature: temperature(val)}, conn)
 }
 
+// SetSpeed sets the fan speed of the unit.
+func SetSpeed(val uint8, conn io.ReadWriter) (err error) {
+
+	return setQuery(setSpeed{Speed: val}, conn)
+}
+
 // GetTemperatures gets the temperature readings from the unit.
 func GetTemperatures(conn io.ReadWriter) (temps Temps, err error) {
 
