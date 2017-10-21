@@ -81,3 +81,14 @@ func GetFirmware(conn io.ReadWriter) (bi BootInfo, err error) {
 
 	return *resp.(*BootInfo), err
 }
+
+// GetVentProfiles gets the fan profiles for each ventilation level.
+func GetVentProfiles(conn io.ReadWriter) (vp VentProfiles, err error) {
+
+	resp, err := getQuery(getVentProfiles, conn)
+	if err != nil {
+		return VentProfiles{}, err
+	}
+
+	return *resp.(*VentProfiles), err
+}

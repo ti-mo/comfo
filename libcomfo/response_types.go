@@ -11,6 +11,7 @@ var (
 		0x0C: &Ventilators{},
 		0x68: &BootInfo{},
 		0x6A: &BootInfo{},
+		0xCE: &VentProfiles{},
 		0xD2: &Temps{},
 		0xDE: &Hours{},
 		0xE0: &Bypass{},
@@ -152,6 +153,51 @@ func (v *Ventilators) UnmarshalBinary(in []byte) error {
 
 	v.InSpeed = uint16(1857000 / uint32(binary.BigEndian.Uint16(in[2:4])))
 	v.OutSpeed = uint16(1857000 / uint32(binary.BigEndian.Uint16(in[4:6])))
+
+	return nil
+}
+
+// Type VentProfiles holds the fen profiles (in percent)
+// for every ventilation level.
+type VentProfiles struct {
+	OutAway uint8
+	OutLow  uint8
+	OutMid  uint8
+	OutHigh uint8
+
+	InFanActive bool
+	InAway      uint8
+	InLow       uint8
+	InMid       uint8
+	InHigh      uint8
+
+	CurrentOut   uint8
+	CurrentIn    uint8
+	CurrentLevel uint8
+}
+
+// UnmarshalBinary unmarshals the binary representation
+// into a VentProfiles structure.
+func (vp *VentProfiles) UnmarshalBinary(in []byte) error {
+
+	if len(in) != 14 {
+		return errPktLen
+	}
+
+	vp.OutAway = in[0]
+	vp.OutLow = in[1]
+	vp.OutMid = in[2]
+	vp.OutHigh = in[10]
+
+	vp.InAway = in[3]
+	vp.InLow = in[4]
+	vp.InMid = in[5]
+	vp.InHigh = in[11]
+	vp.InFanActive = in[9] == 1
+
+	vp.CurrentOut = in[6]
+	vp.CurrentIn = in[7]
+	vp.CurrentLevel = in[8]
 
 	return nil
 }
