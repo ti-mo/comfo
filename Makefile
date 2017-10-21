@@ -42,7 +42,7 @@ test:
 cover: coverage-all.out
 
 .ONESHELLL:
-coverage-all.out:
+coverage-all.out: $(SOURCES)
 	@echo "mode: count" > coverage-all.out
 
 	# Run test suite for all (sub)packages found in the repository
