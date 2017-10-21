@@ -49,7 +49,7 @@ func GetVentilators(conn io.ReadWriter) (vents Ventilators, err error) {
 	return *resp.(*Ventilators), err
 }
 
-// GetHours gets the bypass information from the unit.
+// GetHours gets the operating hours for all moving parts in the unit.
 func GetHours(conn io.ReadWriter) (hours Hours, err error) {
 
 	resp, err := getQuery(getHours, conn)
@@ -60,7 +60,9 @@ func GetHours(conn io.ReadWriter) (hours Hours, err error) {
 	return *resp.(*Hours), err
 }
 
+// GetBootloader gets the bootloader information from the unit.
 func GetBootloader(conn io.ReadWriter) (bi BootInfo, err error) {
+
 	resp, err := getQuery(getBootloader, conn)
 	if err != nil {
 		return BootInfo{}, err
@@ -69,6 +71,7 @@ func GetBootloader(conn io.ReadWriter) (bi BootInfo, err error) {
 	return *resp.(*BootInfo), err
 }
 
+// GetFirmware gets the firmware information from the unit.
 func GetFirmware(conn io.ReadWriter) (bi BootInfo, err error) {
 
 	resp, err := getQuery(getFirmware, conn)
