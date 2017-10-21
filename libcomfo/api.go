@@ -38,6 +38,17 @@ func GetBypass(conn io.ReadWriter) (bypass Bypass, err error) {
 	return *resp.(*Bypass), err
 }
 
+// GetVentilators gets the speeds of the unit's ventilators.
+func GetVentilators(conn io.ReadWriter) (vents Ventilators, err error) {
+
+	resp, err := getQuery(getVentilators, conn)
+	if err != nil {
+		return Ventilators{}, err
+	}
+
+	return *resp.(*Ventilators), err
+}
+
 // GetHours gets the bypass information from the unit.
 func GetHours(conn io.ReadWriter) (hours Hours, err error) {
 

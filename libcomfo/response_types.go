@@ -8,6 +8,7 @@ import (
 var (
 	// Map incoming response types to their internal structs
 	ResponseType = map[uint8]Response{
+		0x0C: &Ventilators{},
 		0x68: &BootInfo{},
 		0x6A: &BootInfo{},
 		0xD2: &Temps{},
@@ -126,6 +127,31 @@ func (h *Hours) UnmarshalBinary(in []byte) error {
 	h.BypassOpen = binary.BigEndian.Uint16(in[13:15])
 	h.Filter = binary.BigEndian.Uint16(in[15:17])
 	h.FanHigh = binary.BigEndian.Uint32(LeftPad32(in[17:20]))
+
+	return nil
+}
+
+// Type Ventilators holds the unit's fan percentage and speeds.
+type Ventilators struct {
+	InPercent  uint8
+	OutPercent uint8
+	InSpeed    uint16
+	OutSpeed   uint16
+}
+
+// UnmarshalBinary unmarshals the binary representation
+// into a Ventilators structure.
+func (v *Ventilators) UnmarshalBinary(in []byte) error {
+
+	if len(in) != 6 {
+		return errPktLen
+	}
+
+	v.InPercent = uint8(in[0])
+	v.OutPercent = uint8(in[1])
+
+	v.InSpeed = uint16(1857000 / uint32(binary.BigEndian.Uint16(in[2:4])))
+	v.OutSpeed = uint16(1857000 / uint32(binary.BigEndian.Uint16(in[4:6])))
 
 	return nil
 }

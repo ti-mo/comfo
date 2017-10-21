@@ -10,11 +10,12 @@ type getRequest uint8
 //
 
 const (
-	getBootloader getRequest = 0x67 // getBootloader gets bootloader info and name from the unit.
-	getFirmware              = 0x69 // getFirmware gets firmware info and device name.
-	getTemps                 = 0xD1 // getTemps gets all available temperatures.
-	getBypass                = 0xDF // getBypass gets heat exchanger information.
-	getHours                 = 0xDD // getHours gets the working hours for moving parts.
+	getVentilators getRequest = 0x0B // getVentilators gets ventilator speed % and RPM
+	getBootloader             = 0x67 // getBootloader gets bootloader info and name from the unit.
+	getFirmware               = 0x69 // getFirmware gets firmware info and device name.
+	getTemps                  = 0xD1 // getTemps gets all available temperatures.
+	getBypass                 = 0xDF // getBypass gets heat exchanger information.
+	getHours                  = 0xDD // getHours gets the working hours for moving parts.
 )
 
 //
