@@ -20,10 +20,10 @@ var (
 
 // Type BootInfo holds bootloader/firmware-related info.
 type BootInfo struct {
-	MajorVersion uint8
-	MinorVersion uint8
-	BetaVersion  uint8
-	DeviceName   string
+	MajorVersion uint8  `json:"major_version"`
+	MinorVersion uint8  `json:"minor_version"`
+	BetaVersion  uint8  `json:"beta_version"`
+	DeviceName   string `json:"device_name"`
 }
 
 // UnmarshalBinary unmarshals the binary representation
@@ -44,14 +44,14 @@ func (bi *BootInfo) UnmarshalBinary(in []byte) error {
 // Type Temps holds the various temperature readings
 // from the ventilation unit.
 type Temps struct {
-	Comfort     temperature
-	OutsideAir  temperature
-	SupplyAir   temperature
-	OutAir      temperature
-	ExhaustAir  temperature
-	GeoHeat     temperature
-	Reheating   temperature
-	KitchenHood temperature
+	Comfort     temperature `json:"comfort"`
+	OutsideAir  temperature `json:"outside_air"`
+	SupplyAir   temperature `json:"supply_air"`
+	OutAir      temperature `json:"out_air"`
+	ExhaustAir  temperature `json:"exhaust_air"`
+	GeoHeat     temperature `json:"geo_heat"`
+	Reheating   temperature `json:"reheating"`
+	KitchenHood temperature `json:"kitchen_hood"`
 }
 
 // UnmarshalBinary unmarshals the binary representation
@@ -77,10 +77,10 @@ func (t *Temps) UnmarshalBinary(in []byte) error {
 // Type Bypass holds the information about
 // the unit's heat exchanger bypass valve.
 type Bypass struct {
-	Factor     uint8
-	Level      uint8
-	Correction uint8
-	SummerMode bool
+	Factor     uint8 `json:"factor"`
+	Level      uint8 `json:"level"`
+	Correction uint8 `json:"correction"`
+	SummerMode bool  `json:"summer_mode"`
 }
 
 // UnmarshalBinary unmarshals the binary representation
@@ -102,14 +102,14 @@ func (b *Bypass) UnmarshalBinary(in []byte) error {
 // Type Hours holds the amount of working hours
 // for every moving component in the unit.
 type Hours struct {
-	FanAway      uint32
-	FanLow       uint32
-	FanMid       uint32
-	FanHigh      uint32
-	FrostProtect uint16
-	Reheating    uint16
-	BypassOpen   uint16
-	Filter       uint16
+	FanAway      uint32 `json:"fan_away"`
+	FanLow       uint32 `json:"fan_low"`
+	FanMid       uint32 `json:"fan_mid"`
+	FanHigh      uint32 `json:"fan_high"`
+	FrostProtect uint16 `json:"frost_protect"`
+	Reheating    uint16 `json:"reheating"`
+	BypassOpen   uint16 `json:"bypass_open"`
+	Filter       uint16 `json:"filter"`
 }
 
 // UnmarshalBinary unmarshals the binary representation
