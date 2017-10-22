@@ -37,10 +37,10 @@ func (bi *BootInfo) UnmarshalBinary(in []byte) error {
 		return errPktLen
 	}
 
-	bi.MajorVersion = in[1]
-	bi.MinorVersion = in[2]
-	bi.BetaVersion = in[3]
-	bi.DeviceName = strings.TrimSpace(string(in[3:13]))
+	bi.MajorVersion = in[0]
+	bi.MinorVersion = in[1]
+	bi.BetaVersion = in[2]
+	bi.DeviceName = strings.TrimSpace(string(in[3:]))
 
 	return nil
 }
