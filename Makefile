@@ -37,7 +37,7 @@ clean_release:
 
 .PHONY: test
 test:
-	go test $(PACKAGES)
+	go test -v $(PACKAGES)
 
 cover: coverage-all.out
 
