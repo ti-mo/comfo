@@ -164,11 +164,19 @@ func (v *Fans) UnmarshalBinary(in []byte) error {
 		return errPktLen
 	}
 
+	// Sanity check both values to catch divide by zero
+	inSpeed := binary.BigEndian.Uint16(in[2:4])
+	outSpeed := binary.BigEndian.Uint16(in[4:6])
+
+	if inSpeed == 0 || outSpeed == 0 {
+		return errZeroValue
+	}
+
 	v.InPercent = uint8(in[0])
 	v.OutPercent = uint8(in[1])
 
-	v.InSpeed = uint16(1857000 / uint32(binary.BigEndian.Uint16(in[2:4])))
-	v.OutSpeed = uint16(1857000 / uint32(binary.BigEndian.Uint16(in[4:6])))
+	v.InSpeed = uint16(1875000 / uint32(inSpeed))
+	v.OutSpeed = uint16(1875000 / uint32(outSpeed))
 
 	return nil
 }

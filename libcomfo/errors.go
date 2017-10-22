@@ -22,4 +22,5 @@ var (
 	errRequestType     = errors.New("unknown request type")
 	errResponseType    = errors.New("unknown response type")
 	errDecodeNil       = errors.New("attempting to decode nil Packet")
+	errZeroValue       = errors.New("unexpected zero value (risk of dividing by zero)")
 )
