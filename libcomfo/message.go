@@ -13,7 +13,8 @@ type SetRequest interface {
 // implementations need to satisfy. They only need to be decoded
 // on the client and don't need to be marshaled again.
 type Response interface {
-	UnmarshalBinary(in []byte) error
+	UnmarshalBinary(in []byte) error // Interprets the Packet payload into a struct
+	New() Response                   // Yields a freshly-allocated instance of the Response type
 }
 
 // EncodeRequestCommand generates a Packet with an empty payload
@@ -70,7 +71,7 @@ func DecodeResponse(in Packet) (out Response, err error) {
 
 	// Look up the response type in the ResponseType map,
 	// do not unmarshal if the entry does not exist.
-	out = ResponseType[in.Command]
+	out = ResponseType[in.Command].New()
 	if out == nil {
 		return nil, errResponseType
 	}

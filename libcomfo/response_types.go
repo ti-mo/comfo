@@ -26,9 +26,13 @@ type BootInfo struct {
 	DeviceName   string `json:"device_name"`
 }
 
+// New returns a new instance of BootInfo.
+func (bi *BootInfo) New() Response { return &BootInfo{} }
+
 // UnmarshalBinary unmarshals the binary representation
 // into a BootInfo structure. Whitespace is trimmed from DeviceName.
 func (bi *BootInfo) UnmarshalBinary(in []byte) error {
+
 	if len(in) != 13 {
 		return errPktLen
 	}
@@ -53,6 +57,9 @@ type Temps struct {
 	Reheating   temperature `json:"reheating"`
 	KitchenHood temperature `json:"kitchen_hood"`
 }
+
+// New returns a new instance of Temps.
+func (*Temps) New() Response { return &Temps{} }
 
 // UnmarshalBinary unmarshals the binary representation
 // into a Temps structure. Fixed length is 9 bytes.
@@ -83,6 +90,9 @@ type Bypass struct {
 	SummerMode bool  `json:"summer_mode"`
 }
 
+// New returns a new instance of Bypass.
+func (*Bypass) New() Response { return &Bypass{} }
+
 // UnmarshalBinary unmarshals the binary representation
 // into a Bypass structure.
 func (b *Bypass) UnmarshalBinary(in []byte) error {
@@ -112,6 +122,9 @@ type Hours struct {
 	Filter       uint16 `json:"filter"`
 }
 
+// New returns a new instance of Hours.
+func (*Hours) New() Response { return &Hours{} }
+
 // UnmarshalBinary unmarshals the binary representation
 // into an Hours structure.
 func (h *Hours) UnmarshalBinary(in []byte) error {
@@ -139,6 +152,9 @@ type Fans struct {
 	InSpeed    uint16 `json:"in_speed"`
 	OutSpeed   uint16 `json:"out_speed"`
 }
+
+// New returns a new instance of Fans.
+func (*Fans) New() Response { return &Fans{} }
 
 // UnmarshalBinary unmarshals the binary representation
 // into a Fans structure.
@@ -175,6 +191,9 @@ type FanProfiles struct {
 	CurrentIn    uint8 `json:"current_in"`
 	CurrentLevel uint8 `json:"current_level"`
 }
+
+// New returns a new instance of FanProfiles.
+func (*FanProfiles) New() Response { return &FanProfiles{} }
 
 // UnmarshalBinary unmarshals the binary representation
 // into a FanProfiles structure.
