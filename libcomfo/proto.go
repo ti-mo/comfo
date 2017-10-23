@@ -34,8 +34,9 @@ type Packet struct {
 	Expect bool
 }
 
+// String is the string representation of a Packet, for debugging purposes.
 func (p Packet) String() string {
-	return fmt.Sprintf("<Packet: %x %v, %v>", p.Command, p.Data, p.Expect)
+	return fmt.Sprintf("<Packet {Command: %x, Data: %v, Expect: %v}>", p.Command, p.Data, p.Expect)
 }
 
 // MarshalPacket takes a Packet structure and converts it into wire protocol.

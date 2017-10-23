@@ -166,3 +166,16 @@ func TestMarshalPacket(t *testing.T) {
 		})
 	}
 }
+
+// Make sure string representation displays
+// all fields in a clear, readable manner.
+func TestPacket_String(t *testing.T) {
+	pkt := Packet{Command: 0x42, Expect: true, Data: []byte{3, 6, 9, 12, 15, 18}}.String()
+
+	exp := "<Packet {Command: 42, Data: [3 6 9 12 15 18], Expect: true}>"
+
+	if want, got := exp, pkt; pkt != exp {
+		t.Fatalf("unexpected packet string:\n- want: %v\n-  got: %v",
+			want, got)
+	}
+}
