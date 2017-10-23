@@ -20,6 +20,9 @@ var (
 	dataOffset = lenOffset + 1
 )
 
+// Packet holds the command type of the request (or the response code)
+// and the payload that is to be encapsulated in a frame. The Expect flag
+// is set to make the parser expect a reply from the unit after sending.
 type Packet struct {
 	// Command type or response code
 	Command uint8
@@ -71,13 +74,13 @@ func UnmarshalPacket(in []byte) (out Packet, err error) {
 	}
 
 	// The command
-	var cmd uint8 = in[cmdOffset+1]
+	var cmd = in[cmdOffset+1]
 
 	// The size of the payload
-	var dataLen uint8 = in[lenOffset]
+	var dataLen = in[lenOffset]
 
 	// Get checksum from packet (last byte)
-	var cksum uint8 = in[len(in)-1]
+	var cksum = in[len(in)-1]
 
 	data := unescapeData(in[dataOffset : len(in)-1])
 

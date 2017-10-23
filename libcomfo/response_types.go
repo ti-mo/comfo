@@ -6,7 +6,9 @@ import (
 )
 
 var (
-	// Map incoming response types to their internal structs
+	// ResponseType maps incoming response types to
+	// their internal structs. Call New() on a Response
+	// to get a clean copy that can be safely modified.
 	ResponseType = map[uint8]Response{
 		0x0C: &Fans{},
 		0x68: &BootInfo{},
@@ -18,7 +20,7 @@ var (
 	}
 )
 
-// Type BootInfo holds bootloader/firmware-related info.
+// BootInfo holds bootloader/firmware-related info.
 type BootInfo struct {
 	MajorVersion uint8  `json:"major_version"`
 	MinorVersion uint8  `json:"minor_version"`
@@ -45,7 +47,7 @@ func (bi *BootInfo) UnmarshalBinary(in []byte) error {
 	return nil
 }
 
-// Type Temps holds the various temperature readings
+// Temps holds the various temperature readings
 // from the ventilation unit.
 type Temps struct {
 	Comfort     temperature `json:"comfort"`
@@ -81,7 +83,7 @@ func (t *Temps) UnmarshalBinary(in []byte) error {
 	return nil
 }
 
-// Type Bypass holds the information about
+// Bypass holds the information about
 // the unit's heat exchanger bypass valve.
 type Bypass struct {
 	Factor     uint8 `json:"factor"`
@@ -109,7 +111,7 @@ func (b *Bypass) UnmarshalBinary(in []byte) error {
 	return nil
 }
 
-// Type Hours holds the amount of working hours
+// Hours holds the amount of working hours
 // for every moving component in the unit.
 type Hours struct {
 	FanAway      uint32 `json:"fan_away"`
@@ -145,7 +147,7 @@ func (h *Hours) UnmarshalBinary(in []byte) error {
 	return nil
 }
 
-// Type Fans holds the unit's fan percentage and speeds.
+// Fans holds the unit's fan percentage and speeds.
 type Fans struct {
 	InPercent  uint8  `json:"in_percent"`
 	OutPercent uint8  `json:"out_percent"`
@@ -181,7 +183,7 @@ func (v *Fans) UnmarshalBinary(in []byte) error {
 	return nil
 }
 
-// Type FanProfiles holds the fan profiles (in percent)
+// FanProfiles holds the fan profiles (in percent)
 // for every ventilation level.
 type FanProfiles struct {
 	OutAway uint8 `json:"out_away"`

@@ -17,7 +17,7 @@ type Response interface {
 	New() Response                   // Yields a freshly-allocated instance of the Response type
 }
 
-// EncodeRequestCommand generates a Packet with an empty payload
+// EncodeGetRequest generates a Packet with an empty payload
 // given the getRequest command type. A response payload is expected.
 func EncodeGetRequest(gr getRequest) (out Packet) {
 
