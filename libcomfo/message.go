@@ -71,10 +71,13 @@ func DecodeResponse(in Packet) (out Response, err error) {
 
 	// Look up the response type in the ResponseType map,
 	// do not unmarshal if the entry does not exist.
-	out = ResponseType[in.Command].New()
+	out = ResponseType[in.Command]
 	if out == nil {
 		return nil, errResponseType
 	}
+
+	// Replace looked-up struct with a new instance
+	out = out.New()
 
 	err = out.UnmarshalBinary(in.Data)
 
