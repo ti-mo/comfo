@@ -130,9 +130,10 @@ func ReadPacket(conn io.Reader, timer *time.Timer, expect bool) (out Packet, err
 func WritePacket(in Packet, conn io.Writer) (out bool, err error) {
 
 	// Get wire representation of the given Packet
+	// TODO: Wrap original error and return errMarshalPacket to the caller
 	pb, err := MarshalPacket(in)
 	if err != nil {
-		return out, errMarshalPacket
+		return out, err
 	}
 
 	// Wrap start and end escape sequences
@@ -140,9 +141,10 @@ func WritePacket(in Packet, conn io.Writer) (out bool, err error) {
 	wr = append(wr, pktEnd...)
 
 	// Write slice to connection
+	// TODO: Wrap original error and return errWrite to the caller
 	_, err = conn.Write(wr)
 	if err != nil {
-		return false, errWrite
+		return false, err
 	}
 
 	return true, nil
