@@ -299,6 +299,75 @@ func TestConnSetRequest(t *testing.T) {
 	}
 }
 
+func TestConnGetRequest(t *testing.T) {
+
+	grtests := []struct {
+		name string
+		gr   getRequest // Command type only
+		resp Response
+		tc   TestConn
+		err  bool
+	}{
+		{
+			name: "get fan speeds",
+			gr:   getFans,
+			tc: TestConn{
+				Receives: []byte{ // Request
+					0x07, 0xF0, // Frame Start
+					0x00, uint8(getFans), // request type
+					0x00,     // Length
+					0xB8,     // Checksum
+					esc, end, // Frame End
+					esc, ack, // Response ACK
+				},
+				Emits: []byte{ // Response
+					esc, ack,
+					0x07, 0xF0, // Frame Start
+					0x00, uint8(getFans + 1), // response type
+					0x06,       // Length
+					0xAA, 0xBB, // in/out percents
+					0x11, 0x22, // in speed
+					0x33, 0x44, // out speed
+					0xCE, // Checksum
+					esc, end,
+					esc, ack,
+				},
+			},
+			resp: &Fans{
+				InPercent:  170,
+				OutPercent: 187,
+				InSpeed:    427,
+				OutSpeed:   142,
+			},
+		},
+		{
+			name: "connection write error",
+			gr:   getFans,
+			tc:   TestConn{},
+			err:  true,
+		},
+	}
+
+	for _, tt := range grtests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			// Run setQuery against a test connection
+			resp, err := getQuery(tt.gr, &tt.tc)
+
+			// Generic error checking
+			if want, got := tt.err, err; !tt.err && err != nil {
+				t.Fatalf("unexpected error during request:\n- want: %v\n-  got: %v",
+					want, got)
+			}
+
+			if want, got := tt.resp, resp; !reflect.DeepEqual(want, got) {
+				t.Fatalf("unexpected response:\n- want: %v\n-  got: %v",
+					want, got)
+			}
+		})
+	}
+}
+
 func TestLeftPad32(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
