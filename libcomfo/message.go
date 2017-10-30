@@ -103,9 +103,6 @@ func setQuery(in SetRequest, conn io.ReadWriter) (err error) {
 func getQuery(in getRequest, conn io.ReadWriter) (resp Response, err error) {
 
 	gr := EncodeGetRequest(in)
-	if err != nil {
-		return
-	}
 
 	qp, err := QueryPacket(gr, conn)
 	if err != nil {
