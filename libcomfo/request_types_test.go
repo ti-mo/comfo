@@ -9,47 +9,47 @@ import (
 func TestSetRequests_MarshalBinary(t *testing.T) {
 	tests := []struct {
 		name  string
-		rtype uint8
+		rtype setRequest
 		req   SetRequest
 		b     []byte
 		err   error
 	}{
 		{
-			name:  "setSpeed",
+			name:  "setSpeedT",
 			rtype: 0x99,
-			req: setSpeed{
+			req: setSpeedT{
 				Speed: 2,
 			},
 			b: []byte{0x02},
 		},
 		{
-			name:  "setSpeed too high",
+			name:  "setSpeedT too high",
 			rtype: 0x99,
-			req: setSpeed{
+			req: setSpeedT{
 				Speed: 5,
 			},
 			err: errTooHigh,
 		},
 		{
-			name:  "setComfort",
+			name:  "setComfortT",
 			rtype: 0xD3,
-			req: setComfort{
+			req: setComfortT{
 				Temperature: 21,
 			},
 			b: []byte{0x52},
 		},
 		{
-			name:  "setComfort too high",
+			name:  "setComfortT too high",
 			rtype: 0xD3,
-			req: setComfort{
+			req: setComfortT{
 				Temperature: 108,
 			},
 			err: errTooHigh,
 		},
 		{
-			name:  "setComfort too low",
+			name:  "setComfortT too low",
 			rtype: 0xD3,
-			req: setComfort{
+			req: setComfortT{
 				Temperature: -21,
 			},
 			err: errTooLow,

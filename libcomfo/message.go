@@ -6,7 +6,7 @@ import "io"
 // must satisfy, as they need to be binary-encoded over the wire.
 type SetRequest interface {
 	MarshalBinary() ([]byte, error)
-	Type() uint8
+	Type() setRequest
 }
 
 // Response is the interface that response command
@@ -48,7 +48,7 @@ func EncodeSetRequest(in SetRequest) (out Packet, err error) {
 	}
 
 	// Populate output structure
-	out.Command = cmd
+	out.Command = uint8(cmd)
 	out.Data = bin
 
 	// All empty requests expect a response payload (get operations),
