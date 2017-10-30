@@ -1,6 +1,7 @@
 package libcomfo
 
 import (
+	"bytes"
 	"errors"
 	"reflect"
 	"testing"
@@ -290,4 +291,23 @@ func TestConnQuery(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestLeftPad32(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("unable to recover from panic in leftPad32()")
+		}
+	}()
+
+	want := []byte{0, 0, 0x1, 0x2}
+	got := leftPad32([]byte{0x01, 0x02})
+
+	if !bytes.Equal(want, got) {
+		t.Fatalf("unexpected error in leftPad32t:\n- want: %v\n-  got: %v",
+			want, got)
+	}
+
+	// Make leftPad32 panic with oversized input
+	leftPad32([]byte{1, 2, 3, 4, 5})
 }
