@@ -223,7 +223,7 @@ func TestDecodeResponse(t *testing.T) {
 	}
 }
 
-func TestConnQuery(t *testing.T) {
+func TestConnSetRequest(t *testing.T) {
 
 	srtests := []struct {
 		name string
@@ -276,6 +276,12 @@ func TestConnQuery(t *testing.T) {
 				Emits: []byte{0xF0, 0x0B, 0xA1, 0x2, esc, ack},
 			},
 			err: errScanInput,
+		},
+		{
+			name: "error from EncodeSetRequest",
+			sr:   mockSetReq{mockType: 0x0},
+			tc:   TestConn{},
+			err:  errRequestType,
 		},
 	}
 
