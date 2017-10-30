@@ -1,9 +1,25 @@
 package libcomfo
 
 import (
+	"bytes"
+	"errors"
+	"fmt"
 	"reflect"
 	"testing"
 )
+
+// mockSetReq implements the SetRequest interface
+// and is used to raise errors during testing.
+type mockSetReq struct {
+	mockType setRequest
+	mockData []byte
+	mockErr  error
+}
+
+func (sr mockSetReq) Type() setRequest { return sr.mockType }
+func (sr mockSetReq) MarshalBinary() (out []byte, err error) {
+	return sr.mockData, sr.mockErr
+}
 
 func TestTemperature_MarshalBinary(t *testing.T) {
 	tests := []struct {
