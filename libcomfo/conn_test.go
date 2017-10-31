@@ -22,6 +22,8 @@ type TestConn struct {
 	HangStart bool
 	HangEOF   bool
 
+	Limit int
+
 	emitted  int
 	received int
 }
@@ -48,6 +50,11 @@ func (tr *TestConn) Read(p []byte) (n int, err error) {
 
 	// Keep track of how many bytes we've been able to copy
 	tr.emitted = tr.emitted + n
+
+	// Return mocked read bytes total
+	if tr.Limit > 0 {
+		n = tr.Limit
+	}
 
 	return
 }
@@ -79,8 +86,15 @@ func (tr *TestConn) Write(p []byte) (n int, err error) {
 	// and compared against the 'Receives' buffer.
 	tr.received = tr.received + len(p)
 
-	// Return the length of the 'written' slice
-	return len(p), err
+	// Return mocked written bytes total
+	if tr.Limit > 0 {
+		n = tr.Limit
+	} else {
+		// Return the length of the 'written' slice
+		n = len(p)
+	}
+
+	return
 }
 
 func TestWaitTimeout(t *testing.T) {
