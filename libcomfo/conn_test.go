@@ -319,3 +319,51 @@ func TestWriteAck(t *testing.T) {
 		})
 	}
 }
+
+func TestQueryPacket(t *testing.T) {
+	at := []struct {
+		name   string
+		pktIn  Packet
+		tc     TestConn
+		pktOut Packet
+		err    error
+	}{
+		{
+			name: "invalid response command type (0x00)",
+			pktIn: Packet{
+				Command: uint8(getFans),
+				Expect:  true,
+			},
+			tc: TestConn{
+				Receives: []byte{esc, start, 0x00, uint8(getFans), 0x00, 0xB8, esc, end},
+				Emits:    []byte{esc, ack, esc, start, 0x00, 0x00, 0x00, 0xAD, esc, end},
+			},
+			err: errInvalidResponse,
+			pktOut: Packet{
+				Data: []byte{},
+			},
+		},
+	}
+
+	for _, tt := range at {
+		t.Run(tt.name, func(t *testing.T) {
+
+			// Copy the TestConn structure of this test cycle into
+			// the goroutine to prevent the test engine from modifying
+			// the structure before it is read by the library.
+			tc := tt.tc
+
+			pktOut, err := QueryPacket(tt.pktIn, &tc)
+
+			if want, got := tt.err, err; want != got {
+				t.Fatalf("unexpected error during packet query:\n- want: %v\n-  got: %v",
+					want, got)
+			}
+
+			if want, got := tt.pktOut, pktOut; !reflect.DeepEqual(want, got) {
+				t.Fatalf("unexpected packet query result:\n- want: %v\n-  got: %v",
+					want, got)
+			}
+		})
+	}
+}
