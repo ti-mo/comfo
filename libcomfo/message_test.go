@@ -78,7 +78,6 @@ func TestTemperature_UnmarshalBinary(t *testing.T) {
 		name string
 		temp temperature
 		b    byte
-		err  error
 	}{
 		{
 			name: "average value",

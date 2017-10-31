@@ -140,7 +140,6 @@ func (t temperature) MarshalBinary() (out byte, err error) {
 // into a float32-derived temperature type.
 func (t *temperature) UnmarshalBinary(in byte) {
 	*t = temperature(in/2) - 20
-	return
 }
 
 // leftPad32 pads a byte sequence to 32 bytes on the left.
