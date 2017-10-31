@@ -112,7 +112,7 @@ func TestWaitTimeout(t *testing.T) {
 		t.Run(t.Name(), func(t *testing.T) {
 
 			// Start a timeout timer with a timeout higher than the return timer
-			timeOutTimer := time.NewTimer(time.Millisecond * 3)
+			timeOutTimer := time.NewTimer(time.Millisecond * 5)
 			go returnTimer() // Start return timer
 
 			// Expect returnChan to unblock before timeOutTimer
