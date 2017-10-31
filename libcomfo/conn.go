@@ -195,10 +195,7 @@ func QueryPacket(in Packet, conn io.ReadWriter) (out Packet, err error) {
 
 	// Send ACK
 	_, err = WriteAck(conn)
-	if err != nil {
-		return out, err
-	}
 
 	// Return query result
-	return out, nil
+	return out, err
 }
