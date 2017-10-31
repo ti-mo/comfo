@@ -131,7 +131,7 @@ func WritePacket(in Packet, conn io.Writer) (out bool, err error) {
 	// TODO: Wrap original error and return errMarshalPacket to the caller
 	pb, err := MarshalPacket(in)
 	if err != nil {
-		return out, err
+		return
 	}
 
 	// Wrap start and end escape sequences
@@ -142,7 +142,7 @@ func WritePacket(in Packet, conn io.Writer) (out bool, err error) {
 	// TODO: Wrap original error and return errWrite to the caller
 	_, err = conn.Write(wr)
 	if err != nil {
-		return false, err
+		return
 	}
 
 	return true, nil
@@ -150,6 +150,7 @@ func WritePacket(in Packet, conn io.Writer) (out bool, err error) {
 
 // WriteAck writes an ACK response to a connection.
 func WriteAck(conn io.Writer) (out bool, err error) {
+
 	num, err := conn.Write(pktAck)
 	if err != nil {
 		return false, err
