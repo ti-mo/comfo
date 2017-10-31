@@ -1,0 +1,37 @@
+# Golang CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-go/ for more details
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.9
+
+    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+    steps:
+      - checkout
+
+      # install tools
+      - run:
+          name: Install tools
+          command: |
+            go get github.com/golang/lint/golint
+            go get honnef.co/go/tools/cmd/megacheck
+            go get -v -t -d ./...
+
+      # run tests
+      - run:
+          name: go vet
+          command: go vet ./...
+
+      - run:
+          name: megacheck (staticcheck, gosimple, unused)
+          command: megacheck ./...
+
+      - run:
+          name: golint
+          command: golint -set_exit_status ./...
+
+      - run:
+          name: go test
+          command: go test -v -race ./...
