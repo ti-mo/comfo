@@ -49,10 +49,10 @@ func ScanTimeout(scanner *bufio.Scanner, timer *time.Timer) (out []byte, err err
 // A Packet structure is extracted from the connection.
 func ReadPacket(conn io.Reader, timer *time.Timer, expect bool) (out Packet, err error) {
 
-	// Read the first byte in the stream
 	scanner := bufio.NewScanner(conn)
 
-	// Split function with configurable
+	// Split function for splitting a byte slice on ACK, start and end sequences.
+	// Double 0x07 characters (escaped 0x07 values) are ignored here.
 	splitFunc := func(data []byte, atEOF bool) (advance int, token []byte, err error) {
 		for i := 0; i < len(data); i++ {
 			// Look for escape characters
@@ -64,9 +64,6 @@ func ReadPacket(conn io.Reader, timer *time.Timer, expect bool) (out Packet, err
 					case ack, start, end:
 						// Advance the pointer past the 2nd command character
 						return i + 2, data[:i], nil
-					case esc:
-						// Ignore double 0x07
-						return i + 2, nil, nil
 					default:
 					}
 				}
@@ -92,6 +89,7 @@ func ReadPacket(conn io.Reader, timer *time.Timer, expect bool) (out Packet, err
 	if !expect {
 		return
 	}
+
 	// Read second escape sequence (start)
 	pr, err = ScanTimeout(scanner, timer)
 	if err != nil {
