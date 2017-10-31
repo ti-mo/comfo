@@ -26,7 +26,7 @@ $(BINARY): $(SOURCES)
 
 .PHONY: clean
 clean:
-	@if [ -f ${BINARY} ] ; then rm -f ${BINARY} ; echo "Removed file '${BINARY}'." ; fi
+	@if [ -f ${BINARY} ] ; then rm -vf ${BINARY} ; fi
 
 .PHONY: clean_release
 clean_release:
@@ -61,6 +61,12 @@ coverage-all.out: $(SOURCES)
 .PHONY: coverhtml
 coverhtml: coverage-all.out
 	go tool cover -html=coverage-all.out
+
+.PHONY: check
+check: test cover
+	go vet ./...
+	megacheck ./...
+	golint -set_exit_status ./...
 
 .ONESHELL:
 .PHONY: gox
