@@ -16,6 +16,8 @@ jobs:
           name: Install tools
           command: |
             go get github.com/golang/lint/golint
+            go get golang.org/x/tools/cmd/cover
+            go get github.com/mattn/goveralls
             go get honnef.co/go/tools/cmd/megacheck
             go get -v -t -d ./...
 
@@ -34,4 +36,12 @@ jobs:
 
       - run:
           name: go test
-          command: go test -v -race ./...
+          command: make test
+
+      - run:
+          name: go cover
+          command: make cover
+
+      - run:
+          name: Upload Coverage Report
+          command: goveralls -coverprofile coverage-all.out -service circleci -repotoken "$COVERALLS_REPO_TOKEN"
