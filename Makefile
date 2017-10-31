@@ -30,10 +30,10 @@ clean:
 
 .PHONY: clean_release
 clean_release:
-	@echo "Cleaning all *.tar.gz in repository.."
-	rm -f *.tar.gz
-	echo "Cleaning all kermit_*_amd64 in repository.."
-	rm -f ${BINARY}_*_amd64
+	@echo "Removing archives matching ${BINARY}-*-{amd64,arm}.tar.gz.."
+	rm -fv ${BINARY}-*-{amd64,arm}.tar.gz
+	echo "Removing binaries matching ${BINARY}_*_{amd64,arm}.."
+	rm -fv ${BINARY}_*_{amd64,arm}
 
 .PHONY: test
 test:
@@ -73,9 +73,9 @@ gox:
 
 .PHONY: release
 release: gox clean_release
-	@gox -osarch="darwin/amd64 linux/amd64" ${LDFLAGS} --output "${BINARY}_{{.OS}}_{{.Arch}}"
+	@gox -osarch="linux/amd64 linux/arm" ${LDFLAGS} --output "${BINARY}_{{.OS}}_{{.Arch}}"
 
 	echo "Archiving:" *_amd64
-	tar -czvf ${BINARY}-linux-${VERSION}.tar.gz ${BINARY}_linux_amd64
-	tar -czvf ${BINARY}-macos-${VERSION}.tar.gz ${BINARY}_darwin_amd64
+	tar -czvf ${BINARY}-linux-${VERSION}-amd64.tar.gz ${BINARY}_linux_amd64
+	tar -czvf ${BINARY}-linux-${VERSION}-arm.tar.gz ${BINARY}_linux_arm
 	echo "Built artifacts:" *.tar.gz
