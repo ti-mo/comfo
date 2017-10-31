@@ -3,6 +3,8 @@ package libcomfo
 import (
 	"bytes"
 	"fmt"
+	"testing"
+	"time"
 )
 
 // TestConn is a structure that implements io.ReadWriter
@@ -46,4 +48,45 @@ func (tr *TestConn) Write(p []byte) (n int, err error) {
 
 	// Return the length of the 'written' slice
 	return len(p), err
+}
+
+func TestWaitTimeout(t *testing.T) {
+
+	returnChan := make(chan bool)
+
+	// Return timer at 2 milliseconds
+	returnTimer := func() {
+		<-time.NewTimer(time.Millisecond * 2).C
+		returnChan <- true
+	}
+
+	// Run test 10 times back-to-back
+	for i := 0; i < 10; i++ {
+		t.Run(t.Name(), func(t *testing.T) {
+
+			// Start a timeout timer with a timeout higher than the return timer
+			timeOutTimer := time.NewTimer(time.Millisecond * 3)
+			go returnTimer() // Start return timer
+
+			// Expect returnChan to unblock before timeOutTimer
+			_, err := WaitTimeout(returnChan, timeOutTimer)
+			if err != nil {
+				t.Fatal("returnChan did not unblock before timeOutTimer")
+			}
+
+			// Start a timeout timer with a lower timeout than return timer
+			timeOutTimer = time.NewTimer(time.Millisecond * 1)
+			go returnTimer() // Start return timer
+
+			// Expect returnChan to unblock before timeOutTimer
+			_, err = WaitTimeout(returnChan, timeOutTimer)
+			if err != errTimeout {
+				t.Fatal("timeOutTimer did not expire before returnChan unblock")
+			}
+
+			// Wait for the return timer to send on channel
+			// This value needs to be read to prevent it from interfering other tests
+			<-returnChan
+		})
+	}
 }
