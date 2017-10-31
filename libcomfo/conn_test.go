@@ -242,3 +242,80 @@ func TestReadPacket(t *testing.T) {
 		})
 	}
 }
+
+func TestWritePacket(t *testing.T) {
+
+	wt := []struct {
+		name string
+		tc   TestConn
+		pkt  Packet
+		err  error
+	}{
+		{
+			name: "oversized packet (handle MarshalPacket error)",
+			pkt: Packet{
+				Data: make([]byte, 256),
+			},
+			err: errTooLong,
+		},
+	}
+
+	for _, tt := range wt {
+		t.Run(tt.name, func(t *testing.T) {
+
+			// Copy the TestConn structure of this test cycle into
+			// the goroutine to prevent the test engine from modifying
+			// the structure before it is read by the library.
+			tc := tt.tc
+
+			// Attempt to write packet to mock connection
+			_, err := WritePacket(tt.pkt, &tc)
+
+			if want, got := tt.err, err; want != got {
+				t.Fatalf("unexpected error writing packet:\n- want: %v\n-  got: %v",
+					want, got)
+			}
+		})
+	}
+}
+
+func TestWriteAck(t *testing.T) {
+
+	at := []struct {
+		name string
+		tc   TestConn
+		err  bool
+	}{
+		{
+			name: "writer not expecting input",
+			tc:   TestConn{},
+			err:  true,
+		},
+		{
+			name: "incomplete ACK write",
+			tc: TestConn{
+				Receives: []byte{esc, ack},
+				Limit:    1,
+			},
+			err: true,
+		},
+	}
+
+	for _, tt := range at {
+		t.Run(tt.name, func(t *testing.T) {
+
+			// Copy the TestConn structure of this test cycle into
+			// the goroutine to prevent the test engine from modifying
+			// the structure before it is read by the library.
+			tc := tt.tc
+
+			// Attempt to write ACK to mock connection
+			_, err := WriteAck(&tc)
+
+			if tt.err != (err != nil) {
+				t.Fatalf("unexpected error condition in ACK write:\n- want error: %v\n-  got error: %v",
+					tt.err, err)
+			}
+		})
+	}
+}
