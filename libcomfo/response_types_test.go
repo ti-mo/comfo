@@ -185,3 +185,88 @@ func TestAll_UnmarshalBinary(t *testing.T) {
 		})
 	}
 }
+
+func TestFanProfiles_Lookup(t *testing.T) {
+	fp := FanProfiles{
+		CurrentLevel: 1,
+		CurrentIn:    2,
+		CurrentOut:   3,
+
+		InAway:  4,
+		OutAway: 5,
+
+		InLow:  6,
+		OutLow: 7,
+
+		InMid:  8,
+		OutMid: 9,
+
+		InHigh:  10,
+		OutHigh: 11,
+	}
+
+	tests := []struct {
+		name   string
+		lookup uint8
+		in     uint8
+		out    uint8
+		err    error
+	}{
+		{
+			name:   "empty lookup",
+			lookup: 0,
+			err:    errNotExist,
+		},
+		{
+			name:   "away",
+			lookup: 1,
+			in:     4,
+			out:    5,
+		},
+		{
+			name:   "low",
+			lookup: 2,
+			in:     6,
+			out:    7,
+		},
+		{
+			name:   "mid",
+			lookup: 3,
+			in:     8,
+			out:    9,
+		},
+		{
+			name:   "high",
+			lookup: 4,
+			in:     10,
+			out:    11,
+		},
+	}
+
+	_, _, err := fp.Lookup(0)
+	if err != errNotExist {
+		t.Fatal("zero lookup did not yield errNotExist")
+	}
+
+	ia, oa, _ := fp.Lookup(1)
+	if ia != 4 || oa != 5 {
+		t.Fatal("unexpected lookup")
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+
+			in, out, err := fp.Lookup(tt.lookup)
+
+			if want, got := tt.err, err; want != got {
+				t.Fatalf("unexpected error looking up fan profile:\n- want: %v\n-  got: %v",
+					want, got)
+			}
+
+			if tt.in != in || tt.out != out {
+				t.Fatalf("unexpected lookup response:\n-  tt.in: %v\n-     in: %v\n- tt.out: %v\n-    out: %v",
+					tt.in, in, tt.out, out)
+			}
+		})
+	}
+}
