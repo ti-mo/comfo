@@ -230,3 +230,21 @@ func (vp *FanProfiles) UnmarshalBinary(in []byte) error {
 
 	return nil
 }
+
+// Lookup returns the in and out airflow percentages associated with the given
+// speed profile (integer). Only values 1-4 are allowed.
+func (vp FanProfiles) Lookup(speed uint8) (inPercent uint8, outPercent uint8, err error) {
+
+	switch speed {
+	case 1:
+		return vp.InAway, vp.OutAway, nil
+	case 2:
+		return vp.InLow, vp.OutLow, nil
+	case 3:
+		return vp.InMid, vp.OutMid, nil
+	case 4:
+		return vp.InHigh, vp.OutHigh, nil
+	default:
+		return 0, 0, errNotExist
+	}
+}

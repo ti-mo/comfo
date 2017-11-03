@@ -18,4 +18,5 @@ var (
 	errResponseType    = errors.New("unknown response type")
 	errDecodeNil       = errors.New("attempting to decode nil Packet")
 	errZeroValue       = errors.New("unexpected zero value (risk of dividing by zero)")
+	errNotExist        = errors.New("item does not exist")
 )
