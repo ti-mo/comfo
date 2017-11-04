@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/tarm/serial"
 	"io"
 	"log"
 	"net"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -34,9 +34,11 @@ var (
 	// Unit configuration
 
 	// UnitMode is the connection mode of the unit, serial or tcp
-	UnitMode = "tcp"
+	UnitMode = "serial"
 	// UnitTCPAddress is the IP address:port of the serial socket forwarder
 	UnitTCPAddress = "10.1.1.5:1234"
+	// UnitSerialPort is the identifier of the serial port to open.
+	UnitSerialPort = "/dev/ttyUSB0"
 )
 
 func main() {
@@ -51,9 +53,16 @@ func main() {
 		log.Printf("Connecting to the unit over tcp at %v ..", UnitTCPAddress)
 		conn, err = net.Dial("tcp", UnitTCPAddress)
 		if err != nil {
-			os.Exit(1)
+			log.Fatalf("unable to dial the unit at %v: %v", UnitTCPAddress, err)
 		}
 		log.Printf("Connection to %v established!", UnitTCPAddress)
+	} else if UnitMode == "serial" {
+		log.Printf("Opening serial device %v ..", UnitSerialPort)
+		conn, err = serial.OpenPort(&serial.Config{Name: UnitSerialPort, Baud: 9600})
+		if err != nil {
+			log.Fatalf("unable to open serial device at %v: %v", UnitSerialPort, err)
+		}
+		log.Printf("Opened device %v!", UnitSerialPort)
 	} else {
 		log.Fatalf("unsupported unit mode %v", UnitMode)
 	}
