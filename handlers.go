@@ -88,6 +88,7 @@ func FanHandlerSet(w http.ResponseWriter, r *http.Request) {
 		"original_speed": origSpeed,
 		"target_speed":   tgtSpeed,
 		"fans":           &fanCache,
+		"profiles":       &fanProfilesCache,
 		"reqtime":        fmt.Sprint(time.Since(start)),
 	}
 
