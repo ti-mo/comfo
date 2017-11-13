@@ -4,3 +4,7 @@
 # Generated
 *.out
 comfo
+
+# Builds
+comfo-*
+comfo_*
