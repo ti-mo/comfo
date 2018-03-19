@@ -1,0 +1,9 @@
+[Install]
+WantedBy=multi-user.target
+
+[Unit]
+Conflicts=comfo-socat.service
+
+[Service]
+Environment=COMFO_USB_DEVICE=/dev/ttyUSB0
+ExecStart=/usr/local/bin/comfo

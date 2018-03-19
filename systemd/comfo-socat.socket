@@ -1,0 +1,10 @@
+[Unit]
+Description=Socket for Comfo socat USB development proxy
+
+[Socket]
+ListenStream=1234
+Accept=true
+MaxConnections=1
+
+[Install]
+WantedBy=sockets.target

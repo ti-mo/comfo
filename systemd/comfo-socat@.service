@@ -1,0 +1,13 @@
+[Unit]
+Description=Comfo, API server for ComfoD ventilation units.
+Conflicts=comfo.service
+
+[Service]
+Environment=COMFO_USB_DEVICE=/dev/ttyUSB0
+StandardInput=socket
+
+ExecStart=/bin/sh -c 'exec /usr/bin/socat STDIO ${COMFO_USB_DEVICE},cs8,clocal=0,nonblock=1,ixoff=0,ixon=0,ispeed=9600,ospeed=9600,raw,echo=0,crtscts=0'
+ExecStopPost=/usr/bin/systemctl start comfo
+
+[Install]
+WantedBy=multi-user.target
