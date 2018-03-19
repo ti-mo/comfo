@@ -82,22 +82,22 @@ func ifaceAddrs() (v4 []net.IP, v6 []net.IP) {
 }
 
 // printEndpoints prints a list of addresses the API is reachable on.
-func printEndpoints(port int) {
+func printEndpoints(port string) {
 
 	// Get host interface addresses
 	v4, v6 := ifaceAddrs()
 
-	fmt.Println("\nAPI Endpoints:")
+	fmt.Println("\nAPI listening on following endpoints:")
 
 	fmt.Println("   IPv4:")
 	for _, a := range v4 {
-		fmt.Printf("    - http://%v:%d\n", a.String(), port)
+		fmt.Printf("    - http://%s:%s\n", a, port)
 	}
 	fmt.Println()
 
 	fmt.Println("   IPv6:")
 	for _, a := range v6 {
-		fmt.Printf("    - http://[%v]:%d\n", a.String(), port)
+		fmt.Printf("    - http://[%s]:%s\n", a, port)
 	}
 	fmt.Println()
 }
