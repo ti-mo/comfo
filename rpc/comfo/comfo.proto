@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package ti-mo.comfo;
+option go_package = "comfo";
+
+service Comfo {
+	rpc GetTemps() returns (Temps);
+	rpc GetBypass() returns (Bypass);	
+	rpc GetFans() returns (Fans);
+	rpc GetFanProfiles() returns (FanProfiles);
+	rpc GetHours() returns (Hours);
+	
+	rpc SetFanSpeed(FanSpeedTarget) returns ();
+}
+
+message Bypass {
+	int32 Factor = 1;
+	int32 Level = 2;
+	int32 Correction = 3;
+	bool SummerMode = 4;
+}
+
+message Fans {
+	int32 InPercent = 1; 
+	int32 OutPercent = 2;
+	int32 InSpeed = 3;
+	int32 OutSpeed = 4;
+}
+
+message FanProfiles {
+	int32 OutAway = 1;
+	int32 OutLow = 2;
+	int32 OutMid = 3;
+	int32 OutHigh = 4;
+	
+	bool InFanActive = 5;
+	int32 InAway = 6;
+	int32 InLow = 7;
+	int32 InMid = 8;
+	int32 InHigh = 9;
+	
+	int32 CurrentOut = 10;
+	int32 CurrentIn = 11;
+	int32 CurrentLevel = 12;
+}
+
+message FanSpeedTarget {
+	int32 abs = 1; // 1-4
+	bool rel = 2; // true = 'up', false = 'down'
+}
+
+message Hours {
+	int32 FanAway = 1;
+	int32 FanLow = 2;
+	int32 FanMid = 3;
+	int32 FanHigh = 4;
+	int32 FrostProtect = 5;
+	int32 Reheating = 6;
+	int32 BypassOpen = 7;
+	int32 Filter = 8;
+}
+
+message Temps {
+	float Comfort = 1;
+	float OutsideAir = 2;
+	float SupplyAir = 3;
+	float OutAir = 4;
+	float ExhaustAir = 5;
+	float GeoHeat = 6;
+	float Reheating = 7;
+	float KitchenHood = 8;
+}
