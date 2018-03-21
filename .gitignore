@@ -3,8 +3,8 @@
 
 # Generated
 *.out
-comfo
+./comfo
 
 # Builds
-comfo-*
-comfo_*
+./comfo-*
+./comfo_*
