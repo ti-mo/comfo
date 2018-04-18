@@ -1,16 +1,19 @@
 syntax = "proto3";
 
-package ti-mo.comfo;
+package comfo;
 option go_package = "comfo";
 
+message noop {}
+
 service Comfo {
-	rpc GetTemps() returns (Temps);
-	rpc GetBypass() returns (Bypass);	
-	rpc GetFans() returns (Fans);
-	rpc GetFanProfiles() returns (FanProfiles);
-	rpc GetHours() returns (Hours);
+	rpc GetBootInfo(noop) returns (BootInfo);
+	rpc GetTemps(noop) returns (Temps);
+	rpc GetBypass(noop) returns (Bypass);	
+	rpc GetFans(noop) returns (Fans);
+	rpc GetFanProfiles(noop) returns (FanProfiles);
+	rpc GetHours(noop) returns (Hours);
 	
-	rpc SetFanSpeed(FanSpeedTarget) returns ();
+	rpc SetFanSpeed(FanSpeedTarget) returns (noop);
 }
 
 message Bypass {
@@ -18,6 +21,13 @@ message Bypass {
 	int32 Level = 2;
 	int32 Correction = 3;
 	bool SummerMode = 4;
+}
+
+message BootInfo {
+	int32 MajorVersion = 1;
+	int32 MinorVersion = 2;
+	int32 BetaVersion = 3;
+	string DeviceName = 4;
 }
 
 message Fans {
