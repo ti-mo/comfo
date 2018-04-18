@@ -24,6 +24,10 @@ endif
 $(BINARY): $(SOURCES)
 	CGO_ENABLED=0 go build ${LDFLAGS} -o ${BINARY}
 
+.PHONY: generate
+generate:
+	go generate ./...
+
 .PHONY: clean
 clean:
 	@if [ -f ${BINARY} ] ; then rm -vf ${BINARY} ; fi
