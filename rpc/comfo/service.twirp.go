@@ -33,19 +33,17 @@ import url "net/url"
 // ===============
 
 type Comfo interface {
-	GetBootInfo(context.Context, *noop) (*BootInfo, error)
+	// 	rpc GetBootInfo(Noop) returns (BootInfo);
+	GetTemps(context.Context, *Noop) (*Temps, error)
 
-	GetTemps(context.Context, *noop) (*Temps, error)
+	// 	rpc GetBypass(Noop) returns (Bypass);
+	GetFans(context.Context, *Noop) (*Fans, error)
 
-	GetBypass(context.Context, *noop) (*Bypass, error)
+	GetFanProfiles(context.Context, *Noop) (*FanProfiles, error)
 
-	GetFans(context.Context, *noop) (*Fans, error)
+	SetFanSpeed(context.Context, *FanSpeedTarget) (*FanSpeedModified, error)
 
-	GetFanProfiles(context.Context, *noop) (*FanProfiles, error)
-
-	GetHours(context.Context, *noop) (*Hours, error)
-
-	SetFanSpeed(context.Context, *FanSpeedTarget) (*noop, error)
+	FlushCache(context.Context, *FlushCacheRequest) (*FlushCacheResponse, error)
 }
 
 // =====================
@@ -54,21 +52,19 @@ type Comfo interface {
 
 type comfoProtobufClient struct {
 	client HTTPClient
-	urls   [7]string
+	urls   [5]string
 }
 
 // NewComfoProtobufClient creates a Protobuf client that implements the Comfo interface.
 // It communicates using Protobuf and can be configured with a custom HTTPClient.
 func NewComfoProtobufClient(addr string, client HTTPClient) Comfo {
 	prefix := urlBase(addr) + ComfoPathPrefix
-	urls := [7]string{
-		prefix + "GetBootInfo",
+	urls := [5]string{
 		prefix + "GetTemps",
-		prefix + "GetBypass",
 		prefix + "GetFans",
 		prefix + "GetFanProfiles",
-		prefix + "GetHours",
 		prefix + "SetFanSpeed",
+		prefix + "FlushCache",
 	}
 	if httpClient, ok := client.(*http.Client); ok {
 		return &comfoProtobufClient{
@@ -82,66 +78,48 @@ func NewComfoProtobufClient(addr string, client HTTPClient) Comfo {
 	}
 }
 
-func (c *comfoProtobufClient) GetBootInfo(ctx context.Context, in *noop) (*BootInfo, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
+func (c *comfoProtobufClient) GetTemps(ctx context.Context, in *Noop) (*Temps, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "comfo.comfoserver")
 	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "GetBootInfo")
-	out := new(BootInfo)
+	ctx = ctxsetters.WithMethodName(ctx, "GetTemps")
+	out := new(Temps)
 	err := doProtobufRequest(ctx, c.client, c.urls[0], in, out)
 	return out, err
 }
 
-func (c *comfoProtobufClient) GetTemps(ctx context.Context, in *noop) (*Temps, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
+func (c *comfoProtobufClient) GetFans(ctx context.Context, in *Noop) (*Fans, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "comfo.comfoserver")
 	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "GetTemps")
-	out := new(Temps)
+	ctx = ctxsetters.WithMethodName(ctx, "GetFans")
+	out := new(Fans)
 	err := doProtobufRequest(ctx, c.client, c.urls[1], in, out)
 	return out, err
 }
 
-func (c *comfoProtobufClient) GetBypass(ctx context.Context, in *noop) (*Bypass, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
+func (c *comfoProtobufClient) GetFanProfiles(ctx context.Context, in *Noop) (*FanProfiles, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "comfo.comfoserver")
 	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "GetBypass")
-	out := new(Bypass)
+	ctx = ctxsetters.WithMethodName(ctx, "GetFanProfiles")
+	out := new(FanProfiles)
 	err := doProtobufRequest(ctx, c.client, c.urls[2], in, out)
 	return out, err
 }
 
-func (c *comfoProtobufClient) GetFans(ctx context.Context, in *noop) (*Fans, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
+func (c *comfoProtobufClient) SetFanSpeed(ctx context.Context, in *FanSpeedTarget) (*FanSpeedModified, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "comfo.comfoserver")
 	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "GetFans")
-	out := new(Fans)
+	ctx = ctxsetters.WithMethodName(ctx, "SetFanSpeed")
+	out := new(FanSpeedModified)
 	err := doProtobufRequest(ctx, c.client, c.urls[3], in, out)
 	return out, err
 }
 
-func (c *comfoProtobufClient) GetFanProfiles(ctx context.Context, in *noop) (*FanProfiles, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
+func (c *comfoProtobufClient) FlushCache(ctx context.Context, in *FlushCacheRequest) (*FlushCacheResponse, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "comfo.comfoserver")
 	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "GetFanProfiles")
-	out := new(FanProfiles)
+	ctx = ctxsetters.WithMethodName(ctx, "FlushCache")
+	out := new(FlushCacheResponse)
 	err := doProtobufRequest(ctx, c.client, c.urls[4], in, out)
-	return out, err
-}
-
-func (c *comfoProtobufClient) GetHours(ctx context.Context, in *noop) (*Hours, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
-	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "GetHours")
-	out := new(Hours)
-	err := doProtobufRequest(ctx, c.client, c.urls[5], in, out)
-	return out, err
-}
-
-func (c *comfoProtobufClient) SetFanSpeed(ctx context.Context, in *FanSpeedTarget) (*noop, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
-	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "SetFanSpeed")
-	out := new(noop)
-	err := doProtobufRequest(ctx, c.client, c.urls[6], in, out)
 	return out, err
 }
 
@@ -151,21 +129,19 @@ func (c *comfoProtobufClient) SetFanSpeed(ctx context.Context, in *FanSpeedTarge
 
 type comfoJSONClient struct {
 	client HTTPClient
-	urls   [7]string
+	urls   [5]string
 }
 
 // NewComfoJSONClient creates a JSON client that implements the Comfo interface.
 // It communicates using JSON and can be configured with a custom HTTPClient.
 func NewComfoJSONClient(addr string, client HTTPClient) Comfo {
 	prefix := urlBase(addr) + ComfoPathPrefix
-	urls := [7]string{
-		prefix + "GetBootInfo",
+	urls := [5]string{
 		prefix + "GetTemps",
-		prefix + "GetBypass",
 		prefix + "GetFans",
 		prefix + "GetFanProfiles",
-		prefix + "GetHours",
 		prefix + "SetFanSpeed",
+		prefix + "FlushCache",
 	}
 	if httpClient, ok := client.(*http.Client); ok {
 		return &comfoJSONClient{
@@ -179,66 +155,48 @@ func NewComfoJSONClient(addr string, client HTTPClient) Comfo {
 	}
 }
 
-func (c *comfoJSONClient) GetBootInfo(ctx context.Context, in *noop) (*BootInfo, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
+func (c *comfoJSONClient) GetTemps(ctx context.Context, in *Noop) (*Temps, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "comfo.comfoserver")
 	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "GetBootInfo")
-	out := new(BootInfo)
+	ctx = ctxsetters.WithMethodName(ctx, "GetTemps")
+	out := new(Temps)
 	err := doJSONRequest(ctx, c.client, c.urls[0], in, out)
 	return out, err
 }
 
-func (c *comfoJSONClient) GetTemps(ctx context.Context, in *noop) (*Temps, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
+func (c *comfoJSONClient) GetFans(ctx context.Context, in *Noop) (*Fans, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "comfo.comfoserver")
 	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "GetTemps")
-	out := new(Temps)
+	ctx = ctxsetters.WithMethodName(ctx, "GetFans")
+	out := new(Fans)
 	err := doJSONRequest(ctx, c.client, c.urls[1], in, out)
 	return out, err
 }
 
-func (c *comfoJSONClient) GetBypass(ctx context.Context, in *noop) (*Bypass, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
+func (c *comfoJSONClient) GetFanProfiles(ctx context.Context, in *Noop) (*FanProfiles, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "comfo.comfoserver")
 	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "GetBypass")
-	out := new(Bypass)
+	ctx = ctxsetters.WithMethodName(ctx, "GetFanProfiles")
+	out := new(FanProfiles)
 	err := doJSONRequest(ctx, c.client, c.urls[2], in, out)
 	return out, err
 }
 
-func (c *comfoJSONClient) GetFans(ctx context.Context, in *noop) (*Fans, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
+func (c *comfoJSONClient) SetFanSpeed(ctx context.Context, in *FanSpeedTarget) (*FanSpeedModified, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "comfo.comfoserver")
 	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "GetFans")
-	out := new(Fans)
+	ctx = ctxsetters.WithMethodName(ctx, "SetFanSpeed")
+	out := new(FanSpeedModified)
 	err := doJSONRequest(ctx, c.client, c.urls[3], in, out)
 	return out, err
 }
 
-func (c *comfoJSONClient) GetFanProfiles(ctx context.Context, in *noop) (*FanProfiles, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
+func (c *comfoJSONClient) FlushCache(ctx context.Context, in *FlushCacheRequest) (*FlushCacheResponse, error) {
+	ctx = ctxsetters.WithPackageName(ctx, "comfo.comfoserver")
 	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "GetFanProfiles")
-	out := new(FanProfiles)
+	ctx = ctxsetters.WithMethodName(ctx, "FlushCache")
+	out := new(FlushCacheResponse)
 	err := doJSONRequest(ctx, c.client, c.urls[4], in, out)
-	return out, err
-}
-
-func (c *comfoJSONClient) GetHours(ctx context.Context, in *noop) (*Hours, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
-	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "GetHours")
-	out := new(Hours)
-	err := doJSONRequest(ctx, c.client, c.urls[5], in, out)
-	return out, err
-}
-
-func (c *comfoJSONClient) SetFanSpeed(ctx context.Context, in *FanSpeedTarget) (*noop, error) {
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
-	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
-	ctx = ctxsetters.WithMethodName(ctx, "SetFanSpeed")
-	out := new(noop)
-	err := doJSONRequest(ctx, c.client, c.urls[6], in, out)
 	return out, err
 }
 
@@ -267,11 +225,11 @@ func (s *comfoServer) writeError(ctx context.Context, resp http.ResponseWriter, 
 // ComfoPathPrefix is used for all URL paths on a twirp Comfo server.
 // Requests are always: POST ComfoPathPrefix/method
 // It can be used in an HTTP mux to route twirp requests along with non-twirp requests on other routes.
-const ComfoPathPrefix = "/twirp/comfo.Comfo/"
+const ComfoPathPrefix = "/twirp/comfo.comfoserver.Comfo/"
 
 func (s *comfoServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
-	ctx = ctxsetters.WithPackageName(ctx, "comfo")
+	ctx = ctxsetters.WithPackageName(ctx, "comfo.comfoserver")
 	ctx = ctxsetters.WithServiceName(ctx, "Comfo")
 	ctx = ctxsetters.WithResponseWriter(ctx, resp)
 
@@ -290,26 +248,20 @@ func (s *comfoServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	}
 
 	switch req.URL.Path {
-	case "/twirp/comfo.Comfo/GetBootInfo":
-		s.serveGetBootInfo(ctx, resp, req)
-		return
-	case "/twirp/comfo.Comfo/GetTemps":
+	case "/twirp/comfo.comfoserver.Comfo/GetTemps":
 		s.serveGetTemps(ctx, resp, req)
 		return
-	case "/twirp/comfo.Comfo/GetBypass":
-		s.serveGetBypass(ctx, resp, req)
-		return
-	case "/twirp/comfo.Comfo/GetFans":
+	case "/twirp/comfo.comfoserver.Comfo/GetFans":
 		s.serveGetFans(ctx, resp, req)
 		return
-	case "/twirp/comfo.Comfo/GetFanProfiles":
+	case "/twirp/comfo.comfoserver.Comfo/GetFanProfiles":
 		s.serveGetFanProfiles(ctx, resp, req)
 		return
-	case "/twirp/comfo.Comfo/GetHours":
-		s.serveGetHours(ctx, resp, req)
-		return
-	case "/twirp/comfo.Comfo/SetFanSpeed":
+	case "/twirp/comfo.comfoserver.Comfo/SetFanSpeed":
 		s.serveSetFanSpeed(ctx, resp, req)
+		return
+	case "/twirp/comfo.comfoserver.Comfo/FlushCache":
+		s.serveFlushCache(ctx, resp, req)
 		return
 	default:
 		msg := fmt.Sprintf("no handler for path %q", req.URL.Path)
@@ -317,150 +269,6 @@ func (s *comfoServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 		s.writeError(ctx, resp, err)
 		return
 	}
-}
-
-func (s *comfoServer) serveGetBootInfo(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
-	header := req.Header.Get("Content-Type")
-	i := strings.Index(header, ";")
-	if i == -1 {
-		i = len(header)
-	}
-	switch strings.TrimSpace(strings.ToLower(header[:i])) {
-	case "application/json":
-		s.serveGetBootInfoJSON(ctx, resp, req)
-	case "application/protobuf":
-		s.serveGetBootInfoProtobuf(ctx, resp, req)
-	default:
-		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
-		twerr := badRouteError(msg, req.Method, req.URL.Path)
-		s.writeError(ctx, resp, twerr)
-	}
-}
-
-func (s *comfoServer) serveGetBootInfoJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
-	var err error
-	ctx = ctxsetters.WithMethodName(ctx, "GetBootInfo")
-	ctx, err = callRequestRouted(ctx, s.hooks)
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-
-	reqContent := new(noop)
-	unmarshaler := jsonpb.Unmarshaler{AllowUnknownFields: true}
-	if err = unmarshaler.Unmarshal(req.Body, reqContent); err != nil {
-		err = wrapErr(err, "failed to parse request json")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-
-	// Call service method
-	var respContent *BootInfo
-	func() {
-		defer func() {
-			// In case of a panic, serve a 500 error and then panic.
-			if r := recover(); r != nil {
-				s.writeError(ctx, resp, twirp.InternalError("Internal service panic"))
-				panic(r)
-			}
-		}()
-		respContent, err = s.GetBootInfo(ctx, reqContent)
-	}()
-
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-	if respContent == nil {
-		s.writeError(ctx, resp, twirp.InternalError("received a nil *BootInfo and nil error while calling GetBootInfo. nil responses are not supported"))
-		return
-	}
-
-	ctx = callResponsePrepared(ctx, s.hooks)
-
-	var buf bytes.Buffer
-	marshaler := &jsonpb.Marshaler{OrigName: true}
-	if err = marshaler.Marshal(&buf, respContent); err != nil {
-		err = wrapErr(err, "failed to marshal json response")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-
-	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
-	resp.Header().Set("Content-Type", "application/json")
-	resp.WriteHeader(http.StatusOK)
-
-	respBytes := buf.Bytes()
-	if n, err := resp.Write(respBytes); err != nil {
-		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
-		twerr := twirp.NewError(twirp.Unknown, msg)
-		callError(ctx, s.hooks, twerr)
-	}
-	callResponseSent(ctx, s.hooks)
-}
-
-func (s *comfoServer) serveGetBootInfoProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
-	var err error
-	ctx = ctxsetters.WithMethodName(ctx, "GetBootInfo")
-	ctx, err = callRequestRouted(ctx, s.hooks)
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-
-	buf, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		err = wrapErr(err, "failed to read request body")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-	reqContent := new(noop)
-	if err = proto.Unmarshal(buf, reqContent); err != nil {
-		err = wrapErr(err, "failed to parse request proto")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-
-	// Call service method
-	var respContent *BootInfo
-	func() {
-		defer func() {
-			// In case of a panic, serve a 500 error and then panic.
-			if r := recover(); r != nil {
-				s.writeError(ctx, resp, twirp.InternalError("Internal service panic"))
-				panic(r)
-			}
-		}()
-		respContent, err = s.GetBootInfo(ctx, reqContent)
-	}()
-
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-	if respContent == nil {
-		s.writeError(ctx, resp, twirp.InternalError("received a nil *BootInfo and nil error while calling GetBootInfo. nil responses are not supported"))
-		return
-	}
-
-	ctx = callResponsePrepared(ctx, s.hooks)
-
-	respBytes, err := proto.Marshal(respContent)
-	if err != nil {
-		err = wrapErr(err, "failed to marshal proto response")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-
-	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
-	resp.Header().Set("Content-Type", "application/protobuf")
-	resp.WriteHeader(http.StatusOK)
-	if n, err := resp.Write(respBytes); err != nil {
-		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
-		twerr := twirp.NewError(twirp.Unknown, msg)
-		callError(ctx, s.hooks, twerr)
-	}
-	callResponseSent(ctx, s.hooks)
 }
 
 func (s *comfoServer) serveGetTemps(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
@@ -490,7 +298,7 @@ func (s *comfoServer) serveGetTempsJSON(ctx context.Context, resp http.ResponseW
 		return
 	}
 
-	reqContent := new(noop)
+	reqContent := new(Noop)
 	unmarshaler := jsonpb.Unmarshaler{AllowUnknownFields: true}
 	if err = unmarshaler.Unmarshal(req.Body, reqContent); err != nil {
 		err = wrapErr(err, "failed to parse request json")
@@ -558,7 +366,7 @@ func (s *comfoServer) serveGetTempsProtobuf(ctx context.Context, resp http.Respo
 		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
 		return
 	}
-	reqContent := new(noop)
+	reqContent := new(Noop)
 	if err = proto.Unmarshal(buf, reqContent); err != nil {
 		err = wrapErr(err, "failed to parse request proto")
 		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
@@ -584,150 +392,6 @@ func (s *comfoServer) serveGetTempsProtobuf(ctx context.Context, resp http.Respo
 	}
 	if respContent == nil {
 		s.writeError(ctx, resp, twirp.InternalError("received a nil *Temps and nil error while calling GetTemps. nil responses are not supported"))
-		return
-	}
-
-	ctx = callResponsePrepared(ctx, s.hooks)
-
-	respBytes, err := proto.Marshal(respContent)
-	if err != nil {
-		err = wrapErr(err, "failed to marshal proto response")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-
-	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
-	resp.Header().Set("Content-Type", "application/protobuf")
-	resp.WriteHeader(http.StatusOK)
-	if n, err := resp.Write(respBytes); err != nil {
-		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
-		twerr := twirp.NewError(twirp.Unknown, msg)
-		callError(ctx, s.hooks, twerr)
-	}
-	callResponseSent(ctx, s.hooks)
-}
-
-func (s *comfoServer) serveGetBypass(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
-	header := req.Header.Get("Content-Type")
-	i := strings.Index(header, ";")
-	if i == -1 {
-		i = len(header)
-	}
-	switch strings.TrimSpace(strings.ToLower(header[:i])) {
-	case "application/json":
-		s.serveGetBypassJSON(ctx, resp, req)
-	case "application/protobuf":
-		s.serveGetBypassProtobuf(ctx, resp, req)
-	default:
-		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
-		twerr := badRouteError(msg, req.Method, req.URL.Path)
-		s.writeError(ctx, resp, twerr)
-	}
-}
-
-func (s *comfoServer) serveGetBypassJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
-	var err error
-	ctx = ctxsetters.WithMethodName(ctx, "GetBypass")
-	ctx, err = callRequestRouted(ctx, s.hooks)
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-
-	reqContent := new(noop)
-	unmarshaler := jsonpb.Unmarshaler{AllowUnknownFields: true}
-	if err = unmarshaler.Unmarshal(req.Body, reqContent); err != nil {
-		err = wrapErr(err, "failed to parse request json")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-
-	// Call service method
-	var respContent *Bypass
-	func() {
-		defer func() {
-			// In case of a panic, serve a 500 error and then panic.
-			if r := recover(); r != nil {
-				s.writeError(ctx, resp, twirp.InternalError("Internal service panic"))
-				panic(r)
-			}
-		}()
-		respContent, err = s.GetBypass(ctx, reqContent)
-	}()
-
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-	if respContent == nil {
-		s.writeError(ctx, resp, twirp.InternalError("received a nil *Bypass and nil error while calling GetBypass. nil responses are not supported"))
-		return
-	}
-
-	ctx = callResponsePrepared(ctx, s.hooks)
-
-	var buf bytes.Buffer
-	marshaler := &jsonpb.Marshaler{OrigName: true}
-	if err = marshaler.Marshal(&buf, respContent); err != nil {
-		err = wrapErr(err, "failed to marshal json response")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-
-	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
-	resp.Header().Set("Content-Type", "application/json")
-	resp.WriteHeader(http.StatusOK)
-
-	respBytes := buf.Bytes()
-	if n, err := resp.Write(respBytes); err != nil {
-		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
-		twerr := twirp.NewError(twirp.Unknown, msg)
-		callError(ctx, s.hooks, twerr)
-	}
-	callResponseSent(ctx, s.hooks)
-}
-
-func (s *comfoServer) serveGetBypassProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
-	var err error
-	ctx = ctxsetters.WithMethodName(ctx, "GetBypass")
-	ctx, err = callRequestRouted(ctx, s.hooks)
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-
-	buf, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		err = wrapErr(err, "failed to read request body")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-	reqContent := new(noop)
-	if err = proto.Unmarshal(buf, reqContent); err != nil {
-		err = wrapErr(err, "failed to parse request proto")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-
-	// Call service method
-	var respContent *Bypass
-	func() {
-		defer func() {
-			// In case of a panic, serve a 500 error and then panic.
-			if r := recover(); r != nil {
-				s.writeError(ctx, resp, twirp.InternalError("Internal service panic"))
-				panic(r)
-			}
-		}()
-		respContent, err = s.GetBypass(ctx, reqContent)
-	}()
-
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-	if respContent == nil {
-		s.writeError(ctx, resp, twirp.InternalError("received a nil *Bypass and nil error while calling GetBypass. nil responses are not supported"))
 		return
 	}
 
@@ -778,7 +442,7 @@ func (s *comfoServer) serveGetFansJSON(ctx context.Context, resp http.ResponseWr
 		return
 	}
 
-	reqContent := new(noop)
+	reqContent := new(Noop)
 	unmarshaler := jsonpb.Unmarshaler{AllowUnknownFields: true}
 	if err = unmarshaler.Unmarshal(req.Body, reqContent); err != nil {
 		err = wrapErr(err, "failed to parse request json")
@@ -846,7 +510,7 @@ func (s *comfoServer) serveGetFansProtobuf(ctx context.Context, resp http.Respon
 		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
 		return
 	}
-	reqContent := new(noop)
+	reqContent := new(Noop)
 	if err = proto.Unmarshal(buf, reqContent); err != nil {
 		err = wrapErr(err, "failed to parse request proto")
 		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
@@ -922,7 +586,7 @@ func (s *comfoServer) serveGetFanProfilesJSON(ctx context.Context, resp http.Res
 		return
 	}
 
-	reqContent := new(noop)
+	reqContent := new(Noop)
 	unmarshaler := jsonpb.Unmarshaler{AllowUnknownFields: true}
 	if err = unmarshaler.Unmarshal(req.Body, reqContent); err != nil {
 		err = wrapErr(err, "failed to parse request json")
@@ -990,7 +654,7 @@ func (s *comfoServer) serveGetFanProfilesProtobuf(ctx context.Context, resp http
 		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
 		return
 	}
-	reqContent := new(noop)
+	reqContent := new(Noop)
 	if err = proto.Unmarshal(buf, reqContent); err != nil {
 		err = wrapErr(err, "failed to parse request proto")
 		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
@@ -1016,150 +680,6 @@ func (s *comfoServer) serveGetFanProfilesProtobuf(ctx context.Context, resp http
 	}
 	if respContent == nil {
 		s.writeError(ctx, resp, twirp.InternalError("received a nil *FanProfiles and nil error while calling GetFanProfiles. nil responses are not supported"))
-		return
-	}
-
-	ctx = callResponsePrepared(ctx, s.hooks)
-
-	respBytes, err := proto.Marshal(respContent)
-	if err != nil {
-		err = wrapErr(err, "failed to marshal proto response")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-
-	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
-	resp.Header().Set("Content-Type", "application/protobuf")
-	resp.WriteHeader(http.StatusOK)
-	if n, err := resp.Write(respBytes); err != nil {
-		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
-		twerr := twirp.NewError(twirp.Unknown, msg)
-		callError(ctx, s.hooks, twerr)
-	}
-	callResponseSent(ctx, s.hooks)
-}
-
-func (s *comfoServer) serveGetHours(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
-	header := req.Header.Get("Content-Type")
-	i := strings.Index(header, ";")
-	if i == -1 {
-		i = len(header)
-	}
-	switch strings.TrimSpace(strings.ToLower(header[:i])) {
-	case "application/json":
-		s.serveGetHoursJSON(ctx, resp, req)
-	case "application/protobuf":
-		s.serveGetHoursProtobuf(ctx, resp, req)
-	default:
-		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
-		twerr := badRouteError(msg, req.Method, req.URL.Path)
-		s.writeError(ctx, resp, twerr)
-	}
-}
-
-func (s *comfoServer) serveGetHoursJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
-	var err error
-	ctx = ctxsetters.WithMethodName(ctx, "GetHours")
-	ctx, err = callRequestRouted(ctx, s.hooks)
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-
-	reqContent := new(noop)
-	unmarshaler := jsonpb.Unmarshaler{AllowUnknownFields: true}
-	if err = unmarshaler.Unmarshal(req.Body, reqContent); err != nil {
-		err = wrapErr(err, "failed to parse request json")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-
-	// Call service method
-	var respContent *Hours
-	func() {
-		defer func() {
-			// In case of a panic, serve a 500 error and then panic.
-			if r := recover(); r != nil {
-				s.writeError(ctx, resp, twirp.InternalError("Internal service panic"))
-				panic(r)
-			}
-		}()
-		respContent, err = s.GetHours(ctx, reqContent)
-	}()
-
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-	if respContent == nil {
-		s.writeError(ctx, resp, twirp.InternalError("received a nil *Hours and nil error while calling GetHours. nil responses are not supported"))
-		return
-	}
-
-	ctx = callResponsePrepared(ctx, s.hooks)
-
-	var buf bytes.Buffer
-	marshaler := &jsonpb.Marshaler{OrigName: true}
-	if err = marshaler.Marshal(&buf, respContent); err != nil {
-		err = wrapErr(err, "failed to marshal json response")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-
-	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
-	resp.Header().Set("Content-Type", "application/json")
-	resp.WriteHeader(http.StatusOK)
-
-	respBytes := buf.Bytes()
-	if n, err := resp.Write(respBytes); err != nil {
-		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
-		twerr := twirp.NewError(twirp.Unknown, msg)
-		callError(ctx, s.hooks, twerr)
-	}
-	callResponseSent(ctx, s.hooks)
-}
-
-func (s *comfoServer) serveGetHoursProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
-	var err error
-	ctx = ctxsetters.WithMethodName(ctx, "GetHours")
-	ctx, err = callRequestRouted(ctx, s.hooks)
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-
-	buf, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		err = wrapErr(err, "failed to read request body")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-	reqContent := new(noop)
-	if err = proto.Unmarshal(buf, reqContent); err != nil {
-		err = wrapErr(err, "failed to parse request proto")
-		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
-		return
-	}
-
-	// Call service method
-	var respContent *Hours
-	func() {
-		defer func() {
-			// In case of a panic, serve a 500 error and then panic.
-			if r := recover(); r != nil {
-				s.writeError(ctx, resp, twirp.InternalError("Internal service panic"))
-				panic(r)
-			}
-		}()
-		respContent, err = s.GetHours(ctx, reqContent)
-	}()
-
-	if err != nil {
-		s.writeError(ctx, resp, err)
-		return
-	}
-	if respContent == nil {
-		s.writeError(ctx, resp, twirp.InternalError("received a nil *Hours and nil error while calling GetHours. nil responses are not supported"))
 		return
 	}
 
@@ -1219,7 +739,7 @@ func (s *comfoServer) serveSetFanSpeedJSON(ctx context.Context, resp http.Respon
 	}
 
 	// Call service method
-	var respContent *noop
+	var respContent *FanSpeedModified
 	func() {
 		defer func() {
 			// In case of a panic, serve a 500 error and then panic.
@@ -1236,7 +756,7 @@ func (s *comfoServer) serveSetFanSpeedJSON(ctx context.Context, resp http.Respon
 		return
 	}
 	if respContent == nil {
-		s.writeError(ctx, resp, twirp.InternalError("received a nil *noop and nil error while calling SetFanSpeed. nil responses are not supported"))
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *FanSpeedModified and nil error while calling SetFanSpeed. nil responses are not supported"))
 		return
 	}
 
@@ -1286,7 +806,7 @@ func (s *comfoServer) serveSetFanSpeedProtobuf(ctx context.Context, resp http.Re
 	}
 
 	// Call service method
-	var respContent *noop
+	var respContent *FanSpeedModified
 	func() {
 		defer func() {
 			// In case of a panic, serve a 500 error and then panic.
@@ -1303,7 +823,151 @@ func (s *comfoServer) serveSetFanSpeedProtobuf(ctx context.Context, resp http.Re
 		return
 	}
 	if respContent == nil {
-		s.writeError(ctx, resp, twirp.InternalError("received a nil *noop and nil error while calling SetFanSpeed. nil responses are not supported"))
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *FanSpeedModified and nil error while calling SetFanSpeed. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	respBytes, err := proto.Marshal(respContent)
+	if err != nil {
+		err = wrapErr(err, "failed to marshal proto response")
+		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/protobuf")
+	resp.WriteHeader(http.StatusOK)
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *comfoServer) serveFlushCache(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	header := req.Header.Get("Content-Type")
+	i := strings.Index(header, ";")
+	if i == -1 {
+		i = len(header)
+	}
+	switch strings.TrimSpace(strings.ToLower(header[:i])) {
+	case "application/json":
+		s.serveFlushCacheJSON(ctx, resp, req)
+	case "application/protobuf":
+		s.serveFlushCacheProtobuf(ctx, resp, req)
+	default:
+		msg := fmt.Sprintf("unexpected Content-Type: %q", req.Header.Get("Content-Type"))
+		twerr := badRouteError(msg, req.Method, req.URL.Path)
+		s.writeError(ctx, resp, twerr)
+	}
+}
+
+func (s *comfoServer) serveFlushCacheJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "FlushCache")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	reqContent := new(FlushCacheRequest)
+	unmarshaler := jsonpb.Unmarshaler{AllowUnknownFields: true}
+	if err = unmarshaler.Unmarshal(req.Body, reqContent); err != nil {
+		err = wrapErr(err, "failed to parse request json")
+		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
+		return
+	}
+
+	// Call service method
+	var respContent *FlushCacheResponse
+	func() {
+		defer func() {
+			// In case of a panic, serve a 500 error and then panic.
+			if r := recover(); r != nil {
+				s.writeError(ctx, resp, twirp.InternalError("Internal service panic"))
+				panic(r)
+			}
+		}()
+		respContent, err = s.FlushCache(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *FlushCacheResponse and nil error while calling FlushCache. nil responses are not supported"))
+		return
+	}
+
+	ctx = callResponsePrepared(ctx, s.hooks)
+
+	var buf bytes.Buffer
+	marshaler := &jsonpb.Marshaler{OrigName: true}
+	if err = marshaler.Marshal(&buf, respContent); err != nil {
+		err = wrapErr(err, "failed to marshal json response")
+		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
+		return
+	}
+
+	ctx = ctxsetters.WithStatusCode(ctx, http.StatusOK)
+	resp.Header().Set("Content-Type", "application/json")
+	resp.WriteHeader(http.StatusOK)
+
+	respBytes := buf.Bytes()
+	if n, err := resp.Write(respBytes); err != nil {
+		msg := fmt.Sprintf("failed to write response, %d of %d bytes written: %s", n, len(respBytes), err.Error())
+		twerr := twirp.NewError(twirp.Unknown, msg)
+		callError(ctx, s.hooks, twerr)
+	}
+	callResponseSent(ctx, s.hooks)
+}
+
+func (s *comfoServer) serveFlushCacheProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+	var err error
+	ctx = ctxsetters.WithMethodName(ctx, "FlushCache")
+	ctx, err = callRequestRouted(ctx, s.hooks)
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+
+	buf, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		err = wrapErr(err, "failed to read request body")
+		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
+		return
+	}
+	reqContent := new(FlushCacheRequest)
+	if err = proto.Unmarshal(buf, reqContent); err != nil {
+		err = wrapErr(err, "failed to parse request proto")
+		s.writeError(ctx, resp, twirp.InternalErrorWith(err))
+		return
+	}
+
+	// Call service method
+	var respContent *FlushCacheResponse
+	func() {
+		defer func() {
+			// In case of a panic, serve a 500 error and then panic.
+			if r := recover(); r != nil {
+				s.writeError(ctx, resp, twirp.InternalError("Internal service panic"))
+				panic(r)
+			}
+		}()
+		respContent, err = s.FlushCache(ctx, reqContent)
+	}()
+
+	if err != nil {
+		s.writeError(ctx, resp, err)
+		return
+	}
+	if respContent == nil {
+		s.writeError(ctx, resp, twirp.InternalError("received a nil *FlushCacheResponse and nil error while calling FlushCache. nil responses are not supported"))
 		return
 	}
 
@@ -1756,52 +1420,59 @@ func callError(ctx context.Context, h *twirp.ServerHooks, err twirp.Error) conte
 }
 
 var twirpFileDescriptor0 = []byte{
-	// 743 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x55, 0x6d, 0x6e, 0xdb, 0x46,
-	0x10, 0x85, 0x68, 0x51, 0x1f, 0x2b, 0xd7, 0x2d, 0x88, 0xb6, 0x20, 0x8c, 0xa2, 0x10, 0x58, 0x14,
-	0x35, 0x50, 0x44, 0x86, 0x93, 0x5c, 0xc0, 0x72, 0x22, 0x4b, 0x88, 0x1d, 0x19, 0x94, 0x91, 0x1f,
-	0xf9, 0xb7, 0xa6, 0xc7, 0x12, 0x03, 0x69, 0x97, 0x58, 0x2e, 0xe5, 0x38, 0xe7, 0xc8, 0x59, 0x72,
-	0x8f, 0x1c, 0x22, 0x07, 0xc8, 0x0d, 0x82, 0xd9, 0x19, 0x8a, 0x2b, 0x20, 0xff, 0xf8, 0xde, 0x0c,
-	0xde, 0xbe, 0x9d, 0x99, 0x1d, 0x8a, 0xd1, 0x32, 0xb7, 0xab, 0xea, 0x6e, 0x94, 0xe9, 0xcd, 0xa9,
-	0xcd, 0x9f, 0x6d, 0xf4, 0x69, 0xa6, 0x37, 0x0f, 0xfa, 0xd4, 0x14, 0x19, 0x7f, 0x95, 0x60, 0xb6,
-	0x79, 0x06, 0xa3, 0xc2, 0x68, 0xab, 0xa3, 0xd0, 0x91, 0x49, 0x47, 0xb4, 0x95, 0xd6, 0x45, 0xb2,
-	0x15, 0x9d, 0xf1, 0x53, 0x21, 0xcb, 0x32, 0xfa, 0x53, 0x74, 0x26, 0x32, 0xb3, 0xda, 0xc4, 0xad,
-	0x61, 0xeb, 0x24, 0x4c, 0x19, 0x45, 0xbf, 0x8b, 0xf0, 0x0a, 0xb6, 0xb0, 0x8e, 0x03, 0x47, 0x13,
-	0x88, 0xfe, 0x16, 0xe2, 0x42, 0x1b, 0x03, 0x99, 0xcd, 0xb5, 0x8a, 0x0f, 0x5c, 0xc8, 0x63, 0x30,
-	0xbe, 0xa8, 0x36, 0x1b, 0x30, 0xd7, 0xfa, 0x1e, 0xe2, 0xf6, 0xb0, 0x75, 0xd2, 0x4b, 0x3d, 0x26,
-	0xf9, 0xdc, 0x12, 0xbd, 0xb1, 0xd6, 0x76, 0xa6, 0x1e, 0x74, 0x94, 0x88, 0xc3, 0x6b, 0xf9, 0x41,
-	0x9b, 0x77, 0x60, 0x4a, 0x94, 0x23, 0x03, 0x7b, 0x9c, 0xcb, 0xc9, 0x55, 0x93, 0x13, 0x70, 0x8e,
-	0xc7, 0x45, 0x43, 0x31, 0x18, 0x83, 0x95, 0x75, 0x0a, 0xb9, 0xf2, 0x29, 0xb4, 0xf5, 0x0a, 0xb0,
-	0x1a, 0x6f, 0xe5, 0x86, 0x6c, 0xf5, 0x53, 0x8f, 0x49, 0x3e, 0x89, 0xf6, 0x44, 0xaa, 0x32, 0xfa,
-	0x4b, 0xf4, 0x67, 0xea, 0x06, 0x4c, 0x06, 0xca, 0xb2, 0x9d, 0x86, 0x40, 0x95, 0x79, 0x65, 0xeb,
-	0x30, 0x39, 0xf1, 0x98, 0x28, 0x16, 0xdd, 0x99, 0x5a, 0x14, 0x00, 0xf7, 0xec, 0xa1, 0x86, 0xd1,
-	0xb1, 0xe8, 0xcd, 0x2b, 0x4b, 0xa1, 0xb6, 0x0b, 0xed, 0x70, 0xf2, 0x35, 0x10, 0x83, 0x89, 0x54,
-	0x37, 0x46, 0x3f, 0xe4, 0x6b, 0x28, 0x51, 0x65, 0x5e, 0xd9, 0xf3, 0x47, 0xf9, 0xc4, 0x0e, 0x6a,
-	0x88, 0xad, 0x9a, 0x57, 0xf6, 0x4a, 0x3f, 0xf2, 0xd9, 0x8c, 0x98, 0xbf, 0xce, 0xeb, 0x63, 0x19,
-	0xb1, 0xd2, 0x34, 0x5f, 0xae, 0xf8, 0xd0, 0x1a, 0x62, 0xc5, 0x66, 0x6a, 0x22, 0xd5, 0x79, 0x66,
-	0xf3, 0x2d, 0xc4, 0xa1, 0xeb, 0x93, 0x4f, 0xa1, 0xe6, 0x4c, 0x39, 0x13, 0x1d, 0xd2, 0x24, 0x84,
-	0x63, 0x31, 0x53, 0x68, 0xa1, 0x4b, 0x63, 0xe1, 0x00, 0xb1, 0x68, 0xa0, 0x57, 0xb3, 0x78, 0xbe,
-	0xd3, 0x70, 0xc7, 0xf7, 0x6b, 0x0d, 0x77, 0x3a, 0x0e, 0x51, 0x65, 0x0c, 0x28, 0x3b, 0xaf, 0x6c,
-	0x2c, 0x78, 0x88, 0x76, 0x0c, 0x76, 0x81, 0xd1, 0x4c, 0xc5, 0x03, 0xea, 0xc2, 0x8e, 0xc0, 0x89,
-	0x60, 0x40, 0xf3, 0x79, 0x48, 0x13, 0xe1, 0x73, 0xc9, 0x4b, 0x71, 0x34, 0x91, 0x54, 0xfb, 0x5b,
-	0x69, 0x96, 0x60, 0xa3, 0xdf, 0xc4, 0x81, 0xbc, 0x2b, 0xb9, 0xa2, 0xf8, 0x89, 0x8c, 0xe1, 0xf1,
-	0xee, 0xa5, 0xf8, 0x99, 0x7c, 0x6b, 0x89, 0x70, 0xaa, 0x2b, 0xe3, 0x7a, 0x80, 0xa5, 0xf0, 0x7a,
-	0xc0, 0x90, 0x9e, 0x8b, 0xf2, 0x7a, 0x40, 0x88, 0x79, 0xaf, 0x07, 0x84, 0x58, 0xc9, 0xef, 0x01,
-	0x43, 0xbc, 0xc7, 0xc4, 0xe8, 0xd2, 0xde, 0x18, 0x6d, 0x21, 0xb3, 0xae, 0x09, 0x61, 0xba, 0xc7,
-	0x61, 0x25, 0x52, 0x58, 0x81, 0xb4, 0xb9, 0x5a, 0x72, 0x23, 0x1a, 0x02, 0xeb, 0x48, 0x8f, 0x78,
-	0x5e, 0x80, 0xe2, 0x86, 0x78, 0x8c, 0xf3, 0x94, 0xaf, 0x2d, 0x18, 0x6e, 0x0b, 0xa3, 0xe4, 0x7b,
-	0x4b, 0x84, 0xb7, 0xb0, 0x29, 0xdc, 0x3d, 0x2f, 0x70, 0x2f, 0x18, 0x9a, 0xf6, 0x20, 0xad, 0x21,
-	0xcf, 0x7a, 0x99, 0xdf, 0xc3, 0x79, 0x6e, 0xdc, 0x5d, 0x83, 0xd4, 0x63, 0xd0, 0xd9, 0xa2, 0x2a,
-	0x8a, 0xf5, 0x13, 0x86, 0x0f, 0x5c, 0xb8, 0x21, 0x78, 0x22, 0x31, 0xd4, 0x76, 0x21, 0x46, 0xa8,
-	0xfa, 0xfa, 0xe3, 0x4a, 0x56, 0xa5, 0x8b, 0x85, 0xa4, 0xda, 0x30, 0xe8, 0xe7, 0x12, 0xf4, 0x14,
-	0xa4, 0x75, 0xb7, 0x0d, 0xd2, 0x1a, 0xee, 0x57, 0xa2, 0x4b, 0xe7, 0x35, 0x95, 0x18, 0x8a, 0xc1,
-	0x9b, 0xdc, 0x66, 0x2b, 0x50, 0x53, 0xad, 0x69, 0x0a, 0x83, 0xd4, 0xa7, 0x9e, 0x7f, 0x09, 0x44,
-	0xe8, 0xee, 0x16, 0xfd, 0x2f, 0x06, 0x97, 0x60, 0x77, 0x4b, 0x68, 0x30, 0x72, 0x9b, 0x71, 0x84,
-	0x6b, 0xf1, 0xf8, 0x57, 0x06, 0xbb, 0xe8, 0xbf, 0xa2, 0x77, 0x09, 0x96, 0x8a, 0xb5, 0x97, 0x79,
-	0xc8, 0x80, 0x42, 0xff, 0x89, 0x3e, 0x6a, 0xd2, 0x46, 0xdd, 0xcb, 0xfb, 0xa5, 0x56, 0xa4, 0xd8,
-	0x3f, 0x78, 0x41, 0xeb, 0x76, 0xcd, 0x5e, 0x5a, 0x0d, 0x5c, 0xe4, 0x4c, 0x1c, 0x51, 0xd2, 0x6e,
-	0x27, 0xec, 0xe5, 0x46, 0x4d, 0xee, 0x2e, 0x81, 0x7c, 0xd2, 0xf0, 0xfe, 0xd4, 0x27, 0x85, 0xce,
-	0xc4, 0x60, 0xe1, 0x94, 0x69, 0x2d, 0xfd, 0xd1, 0x28, 0x79, 0x6f, 0xe5, 0xd8, 0x17, 0x18, 0x77,
-	0xdf, 0xd3, 0xaf, 0xe3, 0xae, 0xe3, 0x7e, 0x24, 0x2f, 0x7e, 0x04, 0x00, 0x00, 0xff, 0xff, 0x21,
-	0xa6, 0xce, 0xe5, 0x7a, 0x06, 0x00, 0x00,
+	// 855 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x55, 0xd1, 0x6e, 0x23, 0x35,
+	0x14, 0x55, 0xa6, 0x49, 0x9a, 0xdc, 0x6c, 0x57, 0xbb, 0x16, 0x82, 0x51, 0x85, 0x56, 0x65, 0x58,
+	0xc4, 0xbe, 0x90, 0x4a, 0xc0, 0x1b, 0xe2, 0xa1, 0x2d, 0x64, 0x33, 0x62, 0xbb, 0xa9, 0x26, 0x05,
+	0x09, 0xde, 0xdc, 0xe9, 0x6d, 0x62, 0x94, 0xd8, 0xb3, 0xb6, 0xa7, 0x4b, 0x78, 0xe2, 0x13, 0x78,
+	0xe0, 0xc7, 0xf8, 0x08, 0x3e, 0x80, 0x3f, 0x40, 0xd7, 0xf6, 0x4c, 0x1c, 0x48, 0xd9, 0x97, 0xc8,
+	0xe7, 0xdc, 0xeb, 0xeb, 0x33, 0xf7, 0x1e, 0x3b, 0x30, 0x5e, 0x08, 0xbb, 0xac, 0x6f, 0xc6, 0xa5,
+	0x5a, 0x9f, 0x5a, 0xf1, 0xd9, 0x5a, 0x9d, 0x96, 0x6a, 0x7d, 0xa7, 0x4e, 0x75, 0x55, 0x86, 0x95,
+	0x41, 0x7d, 0x2f, 0x4a, 0x1c, 0x57, 0x5a, 0x59, 0xc5, 0x9e, 0x3a, 0x72, 0xec, 0x7e, 0x29, 0x82,
+	0x3a, 0xeb, 0x43, 0xf7, 0xb5, 0x52, 0x55, 0x76, 0x0f, 0xfd, 0xf3, 0x4d, 0xc5, 0x8d, 0x61, 0xef,
+	0x43, 0x7f, 0xc2, 0x4b, 0xab, 0x74, 0xda, 0x39, 0xe9, 0xbc, 0x38, 0x2a, 0x02, 0x62, 0xef, 0x41,
+	0xef, 0x15, 0xde, 0xe3, 0x2a, 0x4d, 0x1c, 0xed, 0x01, 0x7b, 0x06, 0x70, 0xa1, 0xb4, 0xc6, 0xd2,
+	0x0a, 0x25, 0xd3, 0x03, 0x17, 0x8a, 0x18, 0x8a, 0xcf, 0xeb, 0xf5, 0x1a, 0xf5, 0xa5, 0xba, 0xc5,
+	0xb4, 0x7b, 0xd2, 0x79, 0x31, 0x28, 0x22, 0x26, 0xfb, 0xa3, 0x03, 0x83, 0x73, 0xa5, 0x6c, 0x2e,
+	0xef, 0x14, 0xcb, 0xe0, 0xd1, 0x25, 0xff, 0x59, 0xe9, 0x1f, 0x50, 0x1b, 0x2a, 0xe7, 0x05, 0xec,
+	0x70, 0x2e, 0x47, 0xc8, 0x6d, 0x4e, 0x12, 0x72, 0x22, 0x8e, 0x9d, 0xc0, 0xe8, 0x1c, 0x2d, 0x6f,
+	0x52, 0xbc, 0xaa, 0x98, 0x22, 0x59, 0xdf, 0x20, 0x75, 0xe6, 0x35, 0x5f, 0x7b, 0x59, 0xc3, 0x22,
+	0x62, 0xb2, 0x5f, 0xa1, 0x3b, 0xe1, 0xd2, 0xb0, 0x0f, 0x61, 0x98, 0xcb, 0x2b, 0xd4, 0x25, 0x4a,
+	0x1b, 0xe4, 0x6c, 0x09, 0xaa, 0x32, 0xab, 0x6d, 0x13, 0xf6, 0x4a, 0x22, 0x86, 0xa5, 0x70, 0x98,
+	0xcb, 0x79, 0x85, 0x78, 0x1b, 0x34, 0x34, 0x90, 0x1d, 0xc3, 0x60, 0x56, 0x5b, 0x1f, 0xea, 0xba,
+	0x50, 0x8b, 0xb3, 0x3f, 0x13, 0x18, 0x4d, 0xb8, 0xbc, 0xd2, 0xea, 0x4e, 0xac, 0xd0, 0x50, 0x95,
+	0x59, 0x6d, 0xcf, 0xde, 0xf2, 0x4d, 0x50, 0xd0, 0x40, 0x1a, 0xd5, 0xac, 0xb6, 0xaf, 0xd4, 0xdb,
+	0x70, 0x76, 0x40, 0x81, 0xbf, 0x14, 0xcd, 0xb1, 0x01, 0x85, 0x4a, 0x53, 0xb1, 0x58, 0x86, 0x43,
+	0x1b, 0x48, 0x1d, 0xcb, 0xe5, 0x84, 0xcb, 0xb3, 0xd2, 0x8a, 0x7b, 0x4c, 0x7b, 0x6e, 0x4e, 0x31,
+	0x45, 0x35, 0x73, 0xe9, 0x44, 0xf4, 0x7d, 0x4d, 0x8f, 0xc8, 0x16, 0xb9, 0x24, 0x09, 0x87, 0xde,
+	0x16, 0x0e, 0x78, 0x96, 0x04, 0x0c, 0x1a, 0x96, 0xce, 0x77, 0x35, 0xdc, 0xf1, 0xc3, 0xa6, 0x86,
+	0x3b, 0x9d, 0x4c, 0x54, 0x6b, 0x8d, 0xd2, 0xce, 0x6a, 0x9b, 0x42, 0x30, 0x51, 0xcb, 0xd0, 0x14,
+	0x02, 0xca, 0x65, 0x3a, 0xf2, 0x53, 0x68, 0x09, 0x72, 0x44, 0x00, 0xde, 0x9f, 0x8f, 0xbc, 0x23,
+	0x62, 0x2e, 0xfb, 0x12, 0x1e, 0x4f, 0xb8, 0xef, 0xfd, 0x35, 0xd7, 0x0b, 0xb4, 0xec, 0x09, 0x1c,
+	0x9c, 0xdd, 0x98, 0xd0, 0x51, 0x5a, 0x12, 0x53, 0x04, 0x7b, 0x0f, 0x0b, 0x5a, 0x66, 0xbf, 0x77,
+	0xe0, 0x49, 0xb3, 0xed, 0x52, 0xdd, 0x8a, 0x3b, 0xe1, 0x47, 0xd7, 0xac, 0xdd, 0xee, 0x41, 0xd1,
+	0x62, 0xf6, 0x1c, 0x8e, 0x66, 0x5a, 0x2c, 0x84, 0xe4, 0x2b, 0x3f, 0x5b, 0x3f, 0x97, 0x5d, 0x92,
+	0x9a, 0xed, 0x45, 0xc4, 0xd6, 0x88, 0x29, 0x1a, 0x54, 0x81, 0x6f, 0xae, 0x45, 0xeb, 0xcd, 0x06,
+	0x66, 0x7f, 0x75, 0xa0, 0x37, 0x55, 0xb5, 0x76, 0xb6, 0xa0, 0xe9, 0x44, 0xb6, 0x08, 0xd0, 0xdf,
+	0x60, 0x19, 0xd9, 0xc2, 0xa3, 0xc0, 0x47, 0xb6, 0xf0, 0x28, 0x54, 0x8a, 0x6d, 0x11, 0x20, 0xb5,
+	0x76, 0xa2, 0x95, 0xb1, 0x57, 0x5a, 0x59, 0x2c, 0xad, 0xf3, 0xc5, 0x51, 0xb1, 0xc3, 0xd1, 0x70,
+	0x0a, 0x5c, 0x22, 0xb7, 0x42, 0x2e, 0x82, 0x37, 0xb6, 0x04, 0x8d, 0xd6, 0xbf, 0x2b, 0xb3, 0x0a,
+	0x65, 0xf0, 0x48, 0xc4, 0x38, 0x4d, 0x62, 0x65, 0x51, 0x07, 0xa7, 0x04, 0x94, 0xfd, 0xdd, 0x81,
+	0xde, 0x35, 0xae, 0x2b, 0xf7, 0x9d, 0x17, 0xf4, 0x60, 0x69, 0x7f, 0x01, 0x93, 0xa2, 0x81, 0xe1,
+	0xfa, 0x19, 0x71, 0x8b, 0x67, 0x42, 0xbb, 0x6f, 0x4d, 0x8a, 0x88, 0x21, 0x65, 0xf3, 0xba, 0xaa,
+	0x56, 0x1b, 0x0a, 0x1f, 0xb8, 0xf0, 0x96, 0x08, 0x97, 0x84, 0x42, 0x5d, 0x17, 0x0a, 0x88, 0xaa,
+	0x7e, 0xfb, 0xcb, 0x92, 0xd7, 0xc6, 0xc5, 0x7a, 0xbe, 0xea, 0x96, 0x21, 0x3d, 0x2f, 0x51, 0x4d,
+	0x91, 0x5b, 0xf7, 0xb5, 0x49, 0xd1, 0xc0, 0xdd, 0x4e, 0x1c, 0xfa, 0xf3, 0xb6, 0x9d, 0x38, 0x81,
+	0xd1, 0x77, 0xc2, 0x96, 0x4b, 0x94, 0x53, 0xa5, 0xfc, 0xc5, 0x48, 0x8a, 0x98, 0xca, 0x3e, 0x85,
+	0xa7, 0x93, 0x55, 0x6d, 0x96, 0x17, 0xbc, 0x5c, 0x62, 0x81, 0x6f, 0x6a, 0x34, 0x96, 0x31, 0xe8,
+	0x5e, 0x6f, 0x2a, 0x74, 0xdf, 0x3e, 0x2c, 0xdc, 0x3a, 0x9b, 0x02, 0x8b, 0x13, 0x4d, 0xa5, 0xa4,
+	0x41, 0x12, 0x36, 0xaf, 0xcb, 0x12, 0x8d, 0x09, 0xbe, 0x6c, 0x60, 0x6c, 0xa7, 0x64, 0xc7, 0x4e,
+	0x9f, 0xff, 0x76, 0x00, 0x3d, 0xd7, 0x4e, 0xf6, 0x35, 0x0c, 0x5e, 0xa2, 0xf5, 0x2d, 0xff, 0x60,
+	0xfc, 0x9f, 0x3f, 0x8a, 0x31, 0xfd, 0x4b, 0x1c, 0xa7, 0x7b, 0x02, 0x7e, 0xcb, 0x57, 0xd4, 0x15,
+	0xeb, 0xde, 0xcc, 0x07, 0x77, 0xef, 0x0b, 0xb8, 0x1d, 0x39, 0x3c, 0xf6, 0x9b, 0xdb, 0x37, 0xef,
+	0xc1, 0x1a, 0xcf, 0xf6, 0xd7, 0x68, 0x37, 0x7e, 0x0f, 0xa3, 0xb9, 0x2b, 0xe5, 0x2f, 0xd2, 0x47,
+	0xfb, 0xd3, 0xa3, 0x87, 0xe0, 0xf8, 0xe3, 0xff, 0x49, 0x69, 0x2f, 0xf6, 0x8f, 0x00, 0xdb, 0x8e,
+	0xb3, 0xe7, 0xfb, 0xb6, 0xfc, 0x7b, 0x72, 0xc7, 0x9f, 0xbc, 0x23, 0xcb, 0x8f, 0xed, 0xfc, 0xf0,
+	0xa7, 0x9e, 0xcb, 0xb8, 0xe9, 0xbb, 0x3f, 0xe9, 0x2f, 0xfe, 0x09, 0x00, 0x00, 0xff, 0xff, 0x31,
+	0x53, 0x1d, 0x8c, 0xd6, 0x07, 0x00, 0x00,
 }

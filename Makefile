@@ -21,7 +21,7 @@ endif
 .DEFAULT_GOAL: $(BINARY)
 
 # This target needs to be named after the file it generates
-$(BINARY): $(SOURCES)
+$(BINARY): $(SOURCES) generate
 	CGO_ENABLED=0 go build ${LDFLAGS} -o ${BINARY}
 
 .PHONY: generate
