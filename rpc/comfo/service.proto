@@ -1,73 +1,83 @@
 syntax = "proto3";
 
-package comfo;
+package comfo.comfoserver;
 option go_package = "comfo";
 
-message noop {}
+message Noop {}
 
 service Comfo {
-	rpc GetBootInfo(noop) returns (BootInfo);
-	rpc GetTemps(noop) returns (Temps);
-	rpc GetBypass(noop) returns (Bypass);	
-	rpc GetFans(noop) returns (Fans);
-	rpc GetFanProfiles(noop) returns (FanProfiles);
-	rpc GetHours(noop) returns (Hours);
-	
-	rpc SetFanSpeed(FanSpeedTarget) returns (noop);
+//	rpc GetBootInfo(Noop) returns (BootInfo);
+	rpc GetTemps(Noop) returns (Temps);
+//	rpc GetBypass(Noop) returns (Bypass);
+	rpc GetFans(Noop) returns (Fans);
+	rpc GetFanProfiles(Noop) returns (FanProfiles);
+//	rpc GetHours(Noop) returns (Hours);
+
+	rpc SetFanSpeed(FanSpeedTarget) returns (FanSpeedModified);
+
+	rpc FlushCache(FlushCacheRequest) returns (FlushCacheResponse);
 }
 
 message Bypass {
-	int32 Factor = 1;
-	int32 Level = 2;
-	int32 Correction = 3;
+	uint32 Factor = 1;
+	uint32 Level = 2;
+	uint32 Correction = 3;
 	bool SummerMode = 4;
 }
 
 message BootInfo {
-	int32 MajorVersion = 1;
-	int32 MinorVersion = 2;
-	int32 BetaVersion = 3;
+	uint32 MajorVersion = 1;
+	uint32 MinorVersion = 2;
+	uint32 BetaVersion = 3;
 	string DeviceName = 4;
 }
 
 message Fans {
-	int32 InPercent = 1; 
-	int32 OutPercent = 2;
-	int32 InSpeed = 3;
-	int32 OutSpeed = 4;
+	uint32 InPercent = 1; 
+	uint32 OutPercent = 2;
+	uint32 InSpeed = 3;
+	uint32 OutSpeed = 4;
 }
 
 message FanProfiles {
-	int32 OutAway = 1;
-	int32 OutLow = 2;
-	int32 OutMid = 3;
-	int32 OutHigh = 4;
+	uint32 OutAway = 1;
+	uint32 OutLow = 2;
+	uint32 OutMid = 3;
+	uint32 OutHigh = 4;
 	
 	bool InFanActive = 5;
-	int32 InAway = 6;
-	int32 InLow = 7;
-	int32 InMid = 8;
-	int32 InHigh = 9;
+	uint32 InAway = 6;
+	uint32 InLow = 7;
+	uint32 InMid = 8;
+	uint32 InHigh = 9;
 	
-	int32 CurrentOut = 10;
-	int32 CurrentIn = 11;
-	int32 CurrentLevel = 12;
+	uint32 CurrentOut = 10;
+	uint32 CurrentIn = 11;
+	uint32 CurrentLevel = 12;
 }
 
+// Abs and Rel are mutually exclusive
 message FanSpeedTarget {
-	int32 abs = 1; // 1-4
-	bool rel = 2; // true = 'up', false = 'down'
+	uint32 Abs = 1; // must be between 1 and 4
+	string Rel = 2; // must be '+' or '-'
+}
+
+message FanSpeedModified {
+	bool Modified = 1; // Whether the fan speed was modified or not
+	uint32 OriginalSpeed = 2; // The fan speed before this modification
+	uint32 TargetSpeed = 3; // Target speed sent in the request
+	string ReqTime = 4; // Total time spent processing the back-end request
 }
 
 message Hours {
-	int32 FanAway = 1;
-	int32 FanLow = 2;
-	int32 FanMid = 3;
-	int32 FanHigh = 4;
-	int32 FrostProtect = 5;
-	int32 Reheating = 6;
-	int32 BypassOpen = 7;
-	int32 Filter = 8;
+	uint32 FanAway = 1;
+	uint32 FanLow = 2;
+	uint32 FanMid = 3;
+	uint32 FanHigh = 4;
+	uint32 FrostProtect = 5;
+	uint32 Reheating = 6;
+	uint32 BypassOpen = 7;
+	uint32 Filter = 8;
 }
 
 message Temps {
@@ -79,4 +89,14 @@ message Temps {
 	float GeoHeat = 6;
 	float Reheating = 7;
 	float KitchenHood = 8;
+}
+
+message FlushCacheRequest {
+	// The type of cache to flush. One of all/fans/temps/profiles.
+	string Type = 1; // required
+}
+
+message FlushCacheResponse {
+	bool Success = 1; // Whether the flush operation was successful
+	string ReqTime = 2; // Total time spent processing the back-end request
 }
