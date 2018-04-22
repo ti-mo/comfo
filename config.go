@@ -8,23 +8,23 @@ import (
 var (
 	// Configuration Keys
 
-	ConfigMode   = "mode"
-	ConfigTarget = "target"
-	ConfigListen = "listen"
+	configMode   = "mode"
+	configTarget = "target"
+	configListen = "listen"
 
 	// Default Configuration Values
 
-	DefaultMode   = "serial"
-	DefaultTarget = "/dev/ttyUSB0"
-	DefaultListen = "[::]:3094"
+	defaultMode   = "serial"
+	defaultTarget = "/dev/ttyUSB0"
+	defaultListen = "[::]:3094"
 )
 
 func init() {
 
 	// Register Flags
-	pflag.String(ConfigMode, DefaultMode, "The mode to connect to the unit (serial/tcp)")
-	pflag.String(ConfigTarget, DefaultTarget, "The address or serial device of the unit")
-	pflag.String(ConfigListen, DefaultListen, "Address to bind the API on.")
+	pflag.String(configMode, defaultMode, "The mode to connect to the unit (serial/tcp)")
+	pflag.String(configTarget, defaultTarget, "The address or serial device of the unit")
+	pflag.String(configListen, defaultListen, "Address to bind the API on.")
 
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)

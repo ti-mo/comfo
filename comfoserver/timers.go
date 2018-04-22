@@ -1,8 +1,9 @@
-package main
+package comfoserver
 
 import (
 	"log"
 	"time"
+	"io"
 )
 
 var (
@@ -15,7 +16,9 @@ var (
 
 // StartCaches initializes the data caches,
 // starts worker timers and starts the cache worker.
-func StartCaches() {
+func StartCaches(conn io.ReadWriteCloser) {
+
+	comfoConn = conn
 
 	log.Println("Updating initial caches.")
 

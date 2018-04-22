@@ -8,13 +8,13 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ti-mo/comfo/comfoserver"
+
 	"github.com/spf13/viper"
 	"github.com/tarm/serial"
 )
 
 var (
-	comfo io.ReadWriteCloser
-
 	// Compile-time injected variables
 
 	// Version is the Comfo API version
@@ -32,29 +32,27 @@ func main() {
 	fmt.Printf("Git Revision: %v\nBuild time: %v, with %v\n\n", GitRev, BuildTime, GoVersion)
 
 	// Open connection to unit
-	c, err := ConnectUnit(viper.GetString(ConfigMode), viper.GetString(ConfigTarget))
+	c, err := ConnectUnit(viper.GetString(configMode), viper.GetString(configTarget))
 	if err != nil {
 		log.Fatalln("Error connecting to unit:", err)
 	}
 
-	// Save connection reference to package
-	comfo = c
-	defer comfo.Close()
+	defer c.Close()
 
 	// Initialize and start cache timers
-	StartCaches()
+	comfoserver.StartCaches(c)
 
 	// Initialize router and listen for connections
 	router := NewRouter()
 
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         viper.GetString(ConfigListen),
+		Addr:         viper.GetString(configListen),
 		WriteTimeout: 5 * time.Second,
 		ReadTimeout:  5 * time.Second,
 	}
 
-	log.Println("API listening on", viper.GetString(ConfigListen))
+	log.Println("API listening on", viper.GetString(configListen))
 
 	log.Fatal(srv.ListenAndServe())
 }

@@ -1,13 +1,17 @@
-package main
+package comfoserver
 
 import (
-	"github.com/ti-mo/comfo/libcomfo"
+	"io"
 	"log"
 	"sync"
 	"time"
+
+	"github.com/ti-mo/comfo/libcomfo"
 )
 
 var (
+	comfoConn io.ReadWriteCloser
+
 	tempCache        TempCache
 	fanCache         FanCache
 	fanProfilesCache FanProfilesCache
@@ -84,7 +88,7 @@ func (tc *TempCache) Update(force bool) {
 	}
 
 	// Call out to the unit and update object
-	if gt, err := libcomfo.GetTemperatures(comfo); err == nil {
+	if gt, err := libcomfo.GetTemperatures(comfoConn); err == nil {
 		tc.Temps = gt
 		tc.LastUpdated = now
 	} else {
@@ -111,7 +115,7 @@ func (fc *FanCache) Update(force bool) {
 	}
 
 	// Call out to the unit and update object
-	if gf, err := libcomfo.GetFans(comfo); err == nil {
+	if gf, err := libcomfo.GetFans(comfoConn); err == nil {
 		fc.Fans = gf
 		fc.LastUpdated = now
 	} else {
@@ -170,7 +174,7 @@ func (fpc *FanProfilesCache) Update(force bool) {
 	}
 
 	// Call out to the unit and update object
-	if fp, err := libcomfo.GetFanProfiles(comfo); err == nil {
+	if fp, err := libcomfo.GetFanProfiles(comfoConn); err == nil {
 		fpc.FanProfiles = fp
 		fpc.LastUpdated = now
 	} else {

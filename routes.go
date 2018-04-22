@@ -1,8 +1,11 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/ti-mo/comfo/comfoserver"
+	rpc "github.com/ti-mo/comfo/rpc/comfo"
 )
 
 // Route is a gorilla/mux route entry.
@@ -17,6 +20,11 @@ type Route struct {
 func NewRouter() *mux.Router {
 
 	router := mux.NewRouter().StrictSlash(true)
+
+	// Add Twirp handler
+	server := &comfoserver.Server{}
+	twirpHandler := rpc.NewComfoServer(server, nil)
+	router.PathPrefix(rpc.ComfoPathPrefix).Handler(Logger(twirpHandler, "twirp"))
 
 	// Add Route entries to router
 	for _, route := range routes {
@@ -38,35 +46,4 @@ func NewRouter() *mux.Router {
 // Routes is a list of Route items.
 type Routes []Route
 
-var routes = Routes{
-	Route{
-		"GetTemperatures",
-		"GET",
-		"/temps",
-		TempHandlerGet,
-	},
-	Route{
-		"GetFans",
-		"GET",
-		"/fans",
-		FanHandlerGet,
-	},
-	Route{
-		"SetFans",
-		"PUT",
-		"/fans/{speed:(?:[1-4]|up|down)}",
-		FanHandlerSet,
-	},
-	Route{
-		"GetFanProfiles",
-		"GET",
-		"/profiles",
-		FanProfilesHandlerGet,
-	},
-	Route{
-		"FlushCache",
-		"PUT",
-		"/cache/flush/{cache:[a-z]+}",
-		FlushCacheHandler,
-	},
-}
+var routes = Routes{}
