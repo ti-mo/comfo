@@ -3,4 +3,8 @@
 
 # Generated
 *.out
-comfo
+
+# Builds
+/comfo
+/comfo-*
+/comfo_*

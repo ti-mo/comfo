@@ -21,8 +21,12 @@ endif
 .DEFAULT_GOAL: $(BINARY)
 
 # This target needs to be named after the file it generates
-$(BINARY): $(SOURCES)
-	go build ${LDFLAGS} -o ${BINARY}
+$(BINARY): $(SOURCES) generate
+	CGO_ENABLED=0 go build ${LDFLAGS} -o ${BINARY}
+
+.PHONY: generate
+generate:
+	go generate ./...
 
 .PHONY: clean
 clean:
@@ -79,7 +83,7 @@ gox:
 
 .PHONY: release
 release: gox clean_release
-	@gox -osarch="linux/amd64 linux/arm" ${LDFLAGS} --output "${BINARY}_{{.OS}}_{{.Arch}}"
+	@CGO_ENABLED=0 gox -osarch="linux/amd64 linux/arm" ${LDFLAGS} --output "${BINARY}_{{.OS}}_{{.Arch}}"
 
 	echo "Archiving:" *_amd64
 	tar -czvf ${BINARY}-linux-${VERSION}-amd64.tar.gz ${BINARY}_linux_amd64
