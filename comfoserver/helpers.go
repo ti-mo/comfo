@@ -2,8 +2,6 @@ package comfoserver
 
 import (
 	"fmt"
-	"net"
-	"strings"
 
 	rpc "github.com/ti-mo/comfo/rpc/comfo"
 	"github.com/twitchtv/twirp"
@@ -44,44 +42,4 @@ func modifySpeed(baseSpeed uint8, target *rpc.FanSpeedTarget) (tgtSpeed uint8, e
 	}
 
 	return
-}
-
-// ifaceAddrs returns a list of ipv4 and ipv6 addresses of the host.
-func ifaceAddrs() (v4 []net.IP, v6 []net.IP) {
-
-	// Get system interface addresses
-	ifaces, _ := net.InterfaceAddrs()
-
-	for _, i := range ifaces {
-		ip, _, _ := net.ParseCIDR(i.String())
-
-		if ip != nil && strings.Contains(ip.String(), ":") {
-			v6 = append(v6, ip)
-		} else {
-			v4 = append(v4, ip)
-		}
-	}
-
-	return
-}
-
-// printEndpoints prints a list of addresses the API is reachable on.
-func printEndpoints(port string) {
-
-	// Get host interface addresses
-	v4, v6 := ifaceAddrs()
-
-	fmt.Println("\nAPI listening on following endpoints:")
-
-	fmt.Println("   IPv4:")
-	for _, a := range v4 {
-		fmt.Printf("    - http://%s:%s\n", a, port)
-	}
-	fmt.Println()
-
-	fmt.Println("   IPv6:")
-	for _, a := range v6 {
-		fmt.Printf("    - http://[%s]:%s\n", a, port)
-	}
-	fmt.Println()
 }
