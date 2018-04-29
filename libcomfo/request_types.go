@@ -19,6 +19,7 @@ const (
 	getFirmware    getRequest = 0x69 // getFirmware gets firmware info and device name.
 	getFanProfiles getRequest = 0xCD // getFanProfiles gets the RPM profiles for every speed level.
 	getTemps       getRequest = 0xD1 // getTemps gets all available temperatures.
+	getErrors      getRequest = 0xD9 // getErrors get a list of error slots and their values.
 	getBypass      getRequest = 0xDF // getBypass gets heat exchanger information.
 	getHours       getRequest = 0xDD // getHours gets the working hours for moving parts.
 )
