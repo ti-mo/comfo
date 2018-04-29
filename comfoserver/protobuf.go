@@ -34,19 +34,19 @@ func (f *FanCache) Protobuf() (pb *rpc.Fans) {
 func (fp *FanProfilesCache) Protobuf() (pb *rpc.FanProfiles) {
 
 	return &rpc.FanProfiles{
-		OutAway: uint32(fanProfilesCache.OutAway),
-		OutLow:  uint32(fanProfilesCache.OutLow),
-		OutMid:  uint32(fanProfilesCache.OutMid),
-		OutHigh: uint32(fanProfilesCache.OutHigh),
+		OutAway: uint32(fp.OutAway),
+		OutLow:  uint32(fp.OutLow),
+		OutMid:  uint32(fp.OutMid),
+		OutHigh: uint32(fp.OutHigh),
 
-		InFanActive: fanProfilesCache.InFanActive,
-		InAway:      uint32(fanProfilesCache.InAway),
-		InLow:       uint32(fanProfilesCache.InLow),
-		InMid:       uint32(fanProfilesCache.InMid),
-		InHigh:      uint32(fanProfilesCache.InHigh),
+		InFanActive: fp.InFanActive,
+		InAway:      uint32(fp.InAway),
+		InLow:       uint32(fp.InLow),
+		InMid:       uint32(fp.InMid),
+		InHigh:      uint32(fp.InHigh),
 
-		CurrentOut:   uint32(fanProfilesCache.CurrentOut),
-		CurrentIn:    uint32(fanProfilesCache.CurrentIn),
-		CurrentLevel: uint32(fanProfilesCache.CurrentLevel),
+		CurrentOut:   uint32(fp.CurrentOut),
+		CurrentIn:    uint32(fp.CurrentIn),
+		CurrentLevel: uint32(fp.CurrentLevel),
 	}
 }
