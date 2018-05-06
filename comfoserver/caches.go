@@ -15,6 +15,7 @@ var (
 	tempCache        TempCache
 	fanCache         FanCache
 	fanProfilesCache FanProfilesCache
+	errorsCache      ErrorsCache
 
 	flushCache   = make(chan string)
 	flushSuccess = make(chan bool)
@@ -41,11 +42,19 @@ type FanProfilesCache struct {
 	CacheLock   sync.RWMutex `json:"-"`
 }
 
+// ErrorsCache wraps libcomfo's Errors structure with caching data.
+type ErrorsCache struct {
+	libcomfo.Errors
+	LastUpdated time.Time    `json:"last_updated"`
+	CacheLock   sync.RWMutex `json:"-"`
+}
+
 // UpdateCaches is a macro method to update all data caches of the unit.
 func UpdateCaches(force bool) {
 	tempCache.Update(force)
 	fanCache.Update(force)
 	fanProfilesCache.Update(force)
+	errorsCache.Update(force)
 }
 
 // FlushCaches manages forced cache flushes for all components and
@@ -179,6 +188,33 @@ func (fpc *FanProfilesCache) Update(force bool) {
 		fpc.LastUpdated = now
 	} else {
 		log.Printf("FanProfilesCache.Update() - Error updating fan profiles cache: %s", err)
+	}
+}
+
+// Update executes a libcomfo query to fetch error states
+// from the unit and sets LastUpdated on the cache object.
+// The force parameter ignores the staleness check and updates anyway.
+func (ec *ErrorsCache) Update(force bool) {
+
+	// Lock the cache object
+	ec.CacheLock.Lock()
+	defer ec.CacheLock.Unlock()
+
+	// Freeze transaction time to start of method
+	now := time.Now()
+
+	// Do not update cache if we're not forced to
+	// and if the update is not due yet
+	if !force && !isStale(ec.LastUpdated, now) {
+		return
+	}
+
+	// Call out to the unit and update object
+	if e, err := libcomfo.GetErrors(comfoConn); err == nil {
+		ec.Errors = e
+		ec.LastUpdated = now
+	} else {
+		log.Printf("Errors.Update() - Error updating errors cache: %s", err)
 	}
 }
 

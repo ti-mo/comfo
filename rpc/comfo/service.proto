@@ -12,6 +12,7 @@ service Comfo {
 	rpc GetFans(Noop) returns (Fans);
 	rpc GetFanProfiles(Noop) returns (FanProfiles);
 //	rpc GetHours(Noop) returns (Hours);
+	rpc GetErrors(Noop) returns (Errors);
 
 	rpc SetFanSpeed(FanSpeedTarget) returns (FanSpeedModified);
 
@@ -30,6 +31,10 @@ message BootInfo {
 	uint32 MinorVersion = 2;
 	uint32 BetaVersion = 3;
 	string DeviceName = 4;
+}
+
+message Errors {
+	bool Filter = 1;
 }
 
 message Fans {

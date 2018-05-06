@@ -92,3 +92,14 @@ func GetFanProfiles(conn io.ReadWriter) (fp FanProfiles, err error) {
 
 	return *resp.(*FanProfiles), err
 }
+
+// GetErrors gets the unit's error statuses and their values.
+func GetErrors(conn io.ReadWriter) (e Errors, err error) {
+
+	resp, err := getQuery(getErrors, conn)
+	if err != nil {
+		return
+	}
+
+	return *resp.(*Errors), err
+}

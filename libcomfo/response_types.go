@@ -15,6 +15,7 @@ var (
 		0x6A: &BootInfo{},
 		0xCE: &FanProfiles{},
 		0xD2: &Temps{},
+		0xDA: &Errors{},
 		0xDE: &Hours{},
 		0xE0: &Bypass{},
 	}
@@ -247,4 +248,26 @@ func (vp FanProfiles) Lookup(speed uint8) (inPercent uint8, outPercent uint8, er
 	default:
 		return 0, 0, errNotExist
 	}
+}
+
+// Errors holds a list of errors that can occur
+// within the unit and their status.
+type Errors struct {
+	Filter bool `json:"filter"`
+}
+
+// New returns a new instance of Errors.
+func (e *Errors) New() Response { return &Errors{} }
+
+// UnmarshalBinary unmarshals the binary representation
+// into a Errors structure.
+func (e *Errors) UnmarshalBinary(in []byte) error {
+
+	if len(in) != 17 {
+		return errPktLen
+	}
+
+	e.Filter = in[8] == 1
+
+	return nil
 }

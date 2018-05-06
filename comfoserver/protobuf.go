@@ -50,3 +50,11 @@ func (fp *FanProfilesCache) Protobuf() (pb *rpc.FanProfiles) {
 		CurrentLevel: uint32(fp.CurrentLevel),
 	}
 }
+
+// Protobuf returns a protobuf representation of ErrorsCache.
+func (e *ErrorsCache) Protobuf() (pb *rpc.Errors) {
+
+	return &rpc.Errors{
+		Filter: e.Filter,
+	}
+}

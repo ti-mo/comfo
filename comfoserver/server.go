@@ -90,6 +90,12 @@ func (s *Server) GetFanProfiles(context.Context, *rpc.Noop) (*rpc.FanProfiles, e
 	return fanProfilesCache.Protobuf(), nil
 }
 
+// GetErrors displays the unit errors cache object.
+func (s *Server) GetErrors(context.Context, *rpc.Noop) (*rpc.Errors, error) {
+
+	return errorsCache.Protobuf(), nil
+}
+
 // FlushCache synchronously updates all data caches of the unit.
 func (s *Server) FlushCache(ctx context.Context, fcr *rpc.FlushCacheRequest) (*rpc.FlushCacheResponse, error) {
 
