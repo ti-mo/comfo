@@ -55,6 +55,26 @@ func TestAll_UnmarshalBinary(t *testing.T) {
 			err:   errPktLen,
 		},
 		{
+			name:  "Errors incorrect length",
+			b:     make([]byte, 0),
+			err:   errPktLen,
+			rtype: 0xDA,
+		},
+		{
+			name: "Errors filter up",
+			b:    []byte{0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+			resp: &Errors{
+				Filter: true,
+			},
+			rtype: 0xDA,
+		},
+		{
+			name:  "Errors filter down",
+			b:     make([]byte, 17),
+			resp:  &Errors{},
+			rtype: 0xDA,
+		},
+		{
 			name: "FirmwareVersion",
 			b:    append([]byte{1, 2, 3}, "qrstuvwxyz"...),
 			resp: &BootInfo{
