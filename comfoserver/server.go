@@ -3,6 +3,7 @@ package comfoserver
 import (
 	"context"
 	"fmt"
+	"math"
 	"sync"
 	"time"
 
@@ -52,6 +53,45 @@ func (s *Server) GetTemps(context.Context, *rpc.Noop) (*rpc.Temps, error) {
 // Setters that modify the state of the unit.
 //
 
+// SetComfortTemp updates the comfort temperature on the unit,
+// causing it to recover the heat from inside the house up to this point.
+func (s *Server) SetComfortTemp(ctx context.Context, ct *rpc.ComfortTarget) (*rpc.ComfortModified, error) {
+
+	start := time.Now()
+
+	var err error
+	var modified bool
+
+	origTemp := tempCache.Comfort
+	targetTemp := uint8(ct.ComfortTemp)
+
+	// Detect truncation
+	if ct.ComfortTemp > math.MaxUint8 {
+		return nil, twirp.InvalidArgumentError("ComfortTemp", "is out of range")
+	}
+
+	if uint8(origTemp) != targetTemp {
+
+		// Lock the fan speed mutex
+		fanLock.Lock()
+		defer fanLock.Unlock()
+
+		err = libcomfo.SetComfort(targetTemp, comfoConn)
+		if err != nil {
+			return nil, twirp.InternalError(err.Error())
+		}
+
+		modified = true
+	}
+
+	return &rpc.ComfortModified{
+		Modified:     modified,
+		OriginalTemp: uint32(origTemp),
+		TargetTemp:   ct.ComfortTemp,
+		ReqTime:      fmt.Sprint(time.Since(start)),
+	}, nil
+}
+
 // SetFanSpeed updates the fan speed on the unit and updates
 // the fan speed and fan profile cache objects.
 func (s *Server) SetFanSpeed(ctx context.Context, fst *rpc.FanSpeedTarget) (*rpc.FanSpeedModified, error) {
@@ -67,7 +107,7 @@ func (s *Server) SetFanSpeed(ctx context.Context, fst *rpc.FanSpeedTarget) (*rpc
 	// Apply action string to original speed
 	tgtSpeed, err := modifySpeed(origSpeed, fst)
 	if err != nil {
-		return nil, err
+		return nil, twirp.InternalError(err.Error())
 	}
 
 	// Only send actions to the unit if speed needs to be modified
