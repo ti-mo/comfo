@@ -15,6 +15,7 @@ service Comfo {
 	rpc GetErrors(Noop) returns (Errors);
 
 	rpc SetFanSpeed(FanSpeedTarget) returns (FanSpeedModified);
+	rpc SetComfortTemp(ComfortTarget) returns (ComfortModified);
 
 	rpc FlushCache(FlushCacheRequest) returns (FlushCacheResponse);
 }
@@ -31,6 +32,17 @@ message BootInfo {
 	uint32 MinorVersion = 2;
 	uint32 BetaVersion = 3;
 	string DeviceName = 4;
+}
+
+message ComfortTarget {
+	uint32 ComfortTemp = 1; // Desired temperature for the heat exchanger
+}
+
+message ComfortModified {
+	bool Modified = 1; // Whether the comfort temperature was modified or not
+	uint32 OriginalTemp = 2; // The temperature before this modification
+	uint32 TargetTemp = 3; // Target temperature sent in the request
+	string ReqTime = 4; // Total time spent processing the back-end request
 }
 
 message Errors {
