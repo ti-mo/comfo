@@ -35,7 +35,7 @@ message BootInfo {
 }
 
 message ComfortTarget {
-	float ComfortTemp = 1; // Desired temperature for the heat exchanger
+	uint32 ComfortTemp = 1; // Desired temperature for the heat exchanger
 }
 
 message ComfortModified {
