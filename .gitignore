@@ -1,6 +1,9 @@
 # IntelliJ
 .idea/
 
+# Customizations
+.envrc
+
 # Generated
 *.out
 
