@@ -31,6 +31,10 @@ func main() {
 	fmt.Printf("Comfo API %v - home automation endpoint for ComfoAir-based ventilation units\n\n", Version)
 	fmt.Printf("Git Revision: %v\nBuild time: %v, with %v\n\n", GitRev, BuildTime, GoVersion)
 
+	// Configure Viper
+	viper.SetEnvPrefix("comfo")
+	viper.AutomaticEnv()
+
 	// Open connection to unit
 	c, err := ConnectUnit(viper.GetString(configMode), viper.GetString(configTarget))
 	if err != nil {
