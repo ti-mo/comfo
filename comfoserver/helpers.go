@@ -8,7 +8,8 @@ import (
 )
 
 // modifySpeed takes the unit's original speed (baseSpeed) and a protobuf FanSpeedTarget.
-// Based on the target a new fan speed is returned between 1 and 4.
+// Based on the target a new fan speed is returned between 1 and 4. An empty FanSpeedTarget
+// will default to a relative speed decrease.
 func modifySpeed(baseSpeed uint8, target *rpc.FanSpeedTarget) (tgtSpeed uint8, err error) {
 
 	// Unit has 4 speed settings
@@ -17,23 +18,18 @@ func modifySpeed(baseSpeed uint8, target *rpc.FanSpeedTarget) (tgtSpeed uint8, e
 	var upperBound uint8 = 4
 
 	// Make sure only one of Abs and Rel is set
-	if target.Abs != 0 && target.Rel != "" {
+	if target.Abs != 0 && target.Rel == true {
 		return 0, twirp.InvalidArgumentError("Abs/Rel", errBothAbsRel.Error())
-	} else if target.Abs == 0 && target.Rel == "" {
-		return 0, twirp.InvalidArgumentError("Abs/Rel", errNoneAbsRel.Error())
 	}
 
 	// Determine Abs/Rel speed and target speed
 	if target.Abs != 0 {
 		tgtSpeed = uint8(target.Abs)
-	} else if target.Rel != "" {
-		if target.Rel == "+" {
-			tgtSpeed = baseSpeed + 1
-		} else if target.Rel == "-" {
-			tgtSpeed = baseSpeed - 1
-		} else {
-			return 0, twirp.InvalidArgumentError("Rel", fmt.Sprintf("unknown value '%v'", target.Rel))
-		}
+	} else if target.Rel == true {
+		tgtSpeed = baseSpeed + 1
+	} else {
+		// Default decrease
+		tgtSpeed = baseSpeed - 1
 	}
 
 	// Bounds check
