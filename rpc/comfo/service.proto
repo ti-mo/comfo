@@ -76,7 +76,7 @@ message FanProfiles {
 // Abs and Rel are mutually exclusive
 message FanSpeedTarget {
 	uint32 Abs = 1; // must be between 1 and 4
-	string Rel = 2; // must be '+' or '-'
+	bool Rel = 2; // False = down, True = up
 }
 
 message FanSpeedModified {
