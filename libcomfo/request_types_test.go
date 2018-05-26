@@ -54,6 +54,21 @@ func TestSetRequests_MarshalBinary(t *testing.T) {
 			},
 			err: errTooLow,
 		},
+		{
+			name:  "FanProfiles (bulk)",
+			rtype: 0xCF,
+			req: FanProfiles{
+				OutAway: 10,
+				InAway:  10,
+				OutLow:  20,
+				InLow:   20,
+				OutMid:  30,
+				InMid:   30,
+				OutHigh: 40,
+				InHigh:  40,
+			},
+			b: []byte{10, 20, 30, 10, 20, 30, 40, 40},
+		},
 	}
 
 	for _, tt := range tests {

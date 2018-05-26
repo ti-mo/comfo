@@ -30,8 +30,9 @@ const (
 //
 
 const (
-	setSpeed   setRequest = 0x99
-	setComfort setRequest = 0xD3
+	setSpeed       setRequest = 0x99
+	setComfort     setRequest = 0xD3
+	setFanProfiles setRequest = 0xCF
 )
 
 // SetRequest setSpeedT controls the fan speed of the unit.
@@ -66,4 +67,25 @@ func (q setComfortT) MarshalBinary() (out []byte, err error) {
 	}
 
 	return []byte{t}, nil
+}
+
+// Type returns the FanProfiles set request message code.
+func (q FanProfiles) Type() setRequest { return setFanProfiles }
+
+// MarshalBinary marshals a FanProfiles into a byte representation
+// to be used as a setRequest.
+func (q FanProfiles) MarshalBinary() (out []byte, err error) {
+
+	out = make([]byte, 8)
+
+	out[0] = q.OutAway
+	out[1] = q.OutLow
+	out[2] = q.OutMid
+	out[3] = q.InAway
+	out[4] = q.InLow
+	out[5] = q.InMid
+	out[6] = q.OutHigh
+	out[7] = q.InHigh
+
+	return
 }
