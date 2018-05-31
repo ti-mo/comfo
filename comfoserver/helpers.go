@@ -18,14 +18,14 @@ func modifySpeed(baseSpeed uint8, target *rpc.FanSpeedTarget) (tgtSpeed uint8, e
 	var upperBound uint8 = 4
 
 	// Make sure only one of Abs and Rel is set
-	if target.Abs != 0 && target.Rel == true {
+	if target.Abs != 0 && target.Rel {
 		return 0, twirp.InvalidArgumentError("Abs/Rel", errBothAbsRel.Error())
 	}
 
 	// Determine Abs/Rel speed and target speed
 	if target.Abs != 0 {
 		tgtSpeed = uint8(target.Abs)
-	} else if target.Rel == true {
+	} else if target.Rel {
 		tgtSpeed = baseSpeed + 1
 	} else {
 		// Default decrease
