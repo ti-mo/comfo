@@ -15,7 +15,11 @@ import (
 )
 
 var (
+	// fanLock guards any fan-related resources
 	fanLock = sync.Mutex{}
+
+	// tempLock guards any temperature-related resources
+	tempLock = sync.Mutex{}
 )
 
 // Server implements the Comfo RPC server.
@@ -72,9 +76,9 @@ func (s *Server) SetComfortTemp(ctx context.Context, ct *rpc.ComfortTarget) (*rp
 
 	if uint8(origTemp) != targetTemp {
 
-		// Lock the fan speed mutex
-		fanLock.Lock()
-		defer fanLock.Unlock()
+		// Lock the temperature mutex
+		tempLock.Lock()
+		defer tempLock.Unlock()
 
 		err = libcomfo.SetComfort(targetTemp, comfoConn)
 		if err != nil {
