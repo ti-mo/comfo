@@ -17,7 +17,7 @@ const (
 	getFans        getRequest = 0x0B // getFans gets ventilator speed % and RPM
 	getBootloader  getRequest = 0x67 // getBootloader gets bootloader info and name from the unit.
 	getFirmware    getRequest = 0x69 // getFirmware gets firmware info and device name.
-	getFanProfiles getRequest = 0xCD // getFanProfiles gets the RPM profiles for every speed level.
+	getFanProfiles getRequest = 0xCD // getFanProfiles gets the RPM profiles for every speed mode.
 	getTemps       getRequest = 0xD1 // getTemps gets all available temperatures.
 	getErrors      getRequest = 0xD9 // getErrors get a list of error slots and their values.
 	getBypass      getRequest = 0xDF // getBypass gets heat exchanger information.

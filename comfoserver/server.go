@@ -102,7 +102,7 @@ func (s *Server) SetFanSpeed(ctx context.Context, fst *rpc.FanSpeedTarget) (*rpc
 	var modified bool
 
 	// Initialize speed values
-	origSpeed := fanProfilesCache.CurrentLevel
+	origSpeed := fanProfilesCache.CurrentMode
 
 	// Apply action string to original speed
 	tgtSpeed, err := modifySpeed(origSpeed, fst)

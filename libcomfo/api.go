@@ -22,12 +22,12 @@ func SetSpeed(val uint8, conn io.ReadWriter) (err error) {
 	return setQuery(setSpeedT{Speed: val}, conn)
 }
 
-// SetFanProfile sets a fan percentage of a single speed level.
-func SetFanProfile(level uint8, speed uint8, conn io.ReadWriter) error {
+// SetFanProfile sets a fan percentage of a single speed mode.
+func SetFanProfile(mode uint8, speed uint8, conn io.ReadWriter) error {
 
-	// Make sure speed level is in range
-	if level > 3 {
-		return errUnknownLevel
+	// Make sure speed mode is valid
+	if mode > 3 {
+		return errUnknownMode
 	}
 
 	// Don't accept any values over 100 (percent)
@@ -44,7 +44,7 @@ func SetFanProfile(level uint8, speed uint8, conn io.ReadWriter) error {
 		return err
 	}
 
-	switch level {
+	switch mode {
 	case 0:
 		cfp.InAway, cfp.OutAway = speed, speed
 	case 1:
@@ -58,7 +58,7 @@ func SetFanProfile(level uint8, speed uint8, conn io.ReadWriter) error {
 	return setQuery(cfp, conn)
 }
 
-// SetFanProfiles sets the fan percentages associated with every speed level.
+// SetFanProfiles sets the fan percentages associated with every speed mode.
 // Only away/low/mid/high's in and out fields are sent to the unit.
 func SetFanProfiles(fp *FanProfiles, conn io.ReadWriter) error {
 
@@ -131,7 +131,7 @@ func GetFirmware(conn io.ReadWriter) (bi BootInfo, err error) {
 	return *resp.(*BootInfo), err
 }
 
-// GetFanProfiles gets the fan profiles for each ventilation level.
+// GetFanProfiles gets the fan profiles for each ventilation mode.
 func GetFanProfiles(conn io.ReadWriter) (fp FanProfiles, err error) {
 
 	resp, err := getQuery(getFanProfiles, conn)

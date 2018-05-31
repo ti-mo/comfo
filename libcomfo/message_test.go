@@ -246,7 +246,7 @@ func TestConnSetRequest(t *testing.T) {
 			},
 		},
 		{
-			name: "set fan speed level",
+			name: "set fan speed mode",
 			sr:   setSpeedT{Speed: 3},
 			tc: TestConn{
 				Receives: []byte{
