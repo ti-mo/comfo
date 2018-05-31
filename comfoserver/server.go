@@ -15,7 +15,11 @@ import (
 )
 
 var (
+	// fanLock guards any fan-related resources
 	fanLock = sync.Mutex{}
+
+	// tempLock guards any temperature-related resources
+	tempLock = sync.Mutex{}
 )
 
 // Server implements the Comfo RPC server.
@@ -67,14 +71,14 @@ func (s *Server) SetComfortTemp(ctx context.Context, ct *rpc.ComfortTarget) (*rp
 
 	// Detect truncation
 	if ct.ComfortTemp > math.MaxUint8 {
-		return nil, twirp.InvalidArgumentError("ComfortTemp", "is out of range")
+		return nil, twirp.InvalidArgumentError("ComfortTemp", "is too large")
 	}
 
 	if uint8(origTemp) != targetTemp {
 
-		// Lock the fan speed mutex
-		fanLock.Lock()
-		defer fanLock.Unlock()
+		// Lock the temperature mutex
+		tempLock.Lock()
+		defer tempLock.Unlock()
 
 		err = libcomfo.SetComfort(targetTemp, comfoConn)
 		if err != nil {
@@ -101,8 +105,12 @@ func (s *Server) SetFanSpeed(ctx context.Context, fst *rpc.FanSpeedTarget) (*rpc
 	var err error
 	var modified bool
 
+	// Lock the fan speed mutex before reading from the cache
+	fanLock.Lock()
+	defer fanLock.Unlock()
+
 	// Initialize speed values
-	origSpeed := fanProfilesCache.CurrentLevel
+	origSpeed := fanProfilesCache.CurrentMode
 
 	// Apply action string to original speed
 	tgtSpeed, err := modifySpeed(origSpeed, fst)
@@ -112,10 +120,6 @@ func (s *Server) SetFanSpeed(ctx context.Context, fst *rpc.FanSpeedTarget) (*rpc
 
 	// Only send actions to the unit if speed needs to be modified
 	if uint8(tgtSpeed) != origSpeed {
-
-		// Lock the fan speed mutex
-		fanLock.Lock()
-		defer fanLock.Unlock()
 
 		// Send target speed to the unit
 		err = libcomfo.SetSpeed(uint8(tgtSpeed), comfoConn)
@@ -140,6 +144,67 @@ func (s *Server) SetFanSpeed(ctx context.Context, fst *rpc.FanSpeedTarget) (*rpc
 		Modified:      modified,
 		OriginalSpeed: uint32(origSpeed),
 		TargetSpeed:   uint32(tgtSpeed),
+		ReqTime:       fmt.Sprint(time.Since(start)),
+	}, nil
+}
+
+// SetFanProfile sets the speed of a single mode (profile) on the unit.
+// There are 4 profiles on a unit, Away, Low, Mid, High.
+func (s *Server) SetFanProfile(ctx context.Context, fpt *rpc.FanProfileTarget) (*rpc.FanProfileModified, error) {
+
+	start := time.Now()
+
+	// Make sure speed mode is valid (0-3)
+	if fpt.GetMode() > 3 {
+		return nil, twirp.InvalidArgumentError("Mode", "(profile) out of range, expected 0-3")
+	}
+
+	// Make sure the target speed is within range (percent)
+	if fpt.GetTargetSpeed() > 100 {
+		return nil, twirp.InvalidArgumentError("TargetSpeed", "too large, max. 100 (percentage)")
+	}
+
+	var modified bool
+	var origSpeed uint8
+
+	mode := uint8(fpt.GetMode())
+	tgtSpeed := uint8(fpt.GetTargetSpeed())
+
+	// Lock the fan speed mutex before reading from the cache
+	fanLock.Lock()
+	defer fanLock.Unlock()
+
+	// Get original fan speed of selected mode into origSpeed
+	switch mode {
+	case 0:
+		origSpeed = fanProfilesCache.InAway
+	case 1:
+		origSpeed = fanProfilesCache.InLow
+	case 2:
+		origSpeed = fanProfilesCache.InMid
+	case 3:
+		origSpeed = fanProfilesCache.InHigh
+	}
+
+	// Modify speed if different
+	if origSpeed != tgtSpeed {
+		// Send profile command to unit
+		err := libcomfo.SetFanProfile(mode, tgtSpeed, comfoConn)
+		if err != nil {
+			return nil, twirp.InternalErrorWith(err)
+		}
+
+		// Flush the fanProfilesCache when values have converged
+		fanProfilesCache.Update(true)
+
+		// Set modified result
+		modified = true
+	}
+
+	return &rpc.FanProfileModified{
+		Modified:      modified,
+		OriginalSpeed: uint32(origSpeed),
+		TargetSpeed:   fpt.GetTargetSpeed(),
 		ReqTime:       fmt.Sprint(time.Since(start)),
 	}, nil
 }

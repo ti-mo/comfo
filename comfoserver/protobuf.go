@@ -45,9 +45,9 @@ func (fp *FanProfilesCache) Protobuf() (pb *rpc.FanProfiles) {
 		InMid:       uint32(fp.InMid),
 		InHigh:      uint32(fp.InHigh),
 
-		CurrentOut:   uint32(fp.CurrentOut),
-		CurrentIn:    uint32(fp.CurrentIn),
-		CurrentLevel: uint32(fp.CurrentLevel),
+		CurrentOut:  uint32(fp.CurrentOut),
+		CurrentIn:   uint32(fp.CurrentIn),
+		CurrentMode: uint32(fp.CurrentMode),
 	}
 }
 

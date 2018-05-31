@@ -19,4 +19,5 @@ var (
 	errDecodeNil       = errors.New("attempting to decode nil Packet")
 	errZeroValue       = errors.New("unexpected zero value (risk of dividing by zero)")
 	errNotExist        = errors.New("item does not exist")
+	errUnknownMode     = errors.New("unknown speed mode")
 )

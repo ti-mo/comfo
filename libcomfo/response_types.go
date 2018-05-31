@@ -185,7 +185,7 @@ func (v *Fans) UnmarshalBinary(in []byte) error {
 }
 
 // FanProfiles holds the fan profiles (in percent)
-// for every ventilation level.
+// for every ventilation mode.
 type FanProfiles struct {
 	OutAway uint8 `json:"out_away"`
 	OutLow  uint8 `json:"out_low"`
@@ -198,9 +198,9 @@ type FanProfiles struct {
 	InMid       uint8 `json:"in_mid"`
 	InHigh      uint8 `json:"in_high"`
 
-	CurrentOut   uint8 `json:"current_out"`
-	CurrentIn    uint8 `json:"current_in"`
-	CurrentLevel uint8 `json:"current_level"`
+	CurrentOut  uint8 `json:"current_out"`
+	CurrentIn   uint8 `json:"current_in"`
+	CurrentMode uint8 `json:"current_mode"`
 }
 
 // New returns a new instance of FanProfiles.
@@ -227,7 +227,7 @@ func (vp *FanProfiles) UnmarshalBinary(in []byte) error {
 
 	vp.CurrentOut = in[6]
 	vp.CurrentIn = in[7]
-	vp.CurrentLevel = in[8]
+	vp.CurrentMode = in[8]
 
 	return nil
 }

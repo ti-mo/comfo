@@ -15,7 +15,7 @@ type mockSetReq struct {
 	mockErr  error
 }
 
-func (sr mockSetReq) Type() setRequest { return sr.mockType }
+func (sr mockSetReq) requestType() setRequest { return sr.mockType }
 func (sr mockSetReq) MarshalBinary() (out []byte, err error) {
 	return sr.mockData, sr.mockErr
 }
@@ -246,7 +246,7 @@ func TestConnSetRequest(t *testing.T) {
 			},
 		},
 		{
-			name: "set fan speed level",
+			name: "set fan speed mode",
 			sr:   setSpeedT{Speed: 3},
 			tc: TestConn{
 				Receives: []byte{
