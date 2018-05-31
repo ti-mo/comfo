@@ -105,6 +105,10 @@ func (s *Server) SetFanSpeed(ctx context.Context, fst *rpc.FanSpeedTarget) (*rpc
 	var err error
 	var modified bool
 
+	// Lock the fan speed mutex before reading from the cache
+	fanLock.Lock()
+	defer fanLock.Unlock()
+
 	// Initialize speed values
 	origSpeed := fanProfilesCache.CurrentMode
 
@@ -116,10 +120,6 @@ func (s *Server) SetFanSpeed(ctx context.Context, fst *rpc.FanSpeedTarget) (*rpc
 
 	// Only send actions to the unit if speed needs to be modified
 	if uint8(tgtSpeed) != origSpeed {
-
-		// Lock the fan speed mutex
-		fanLock.Lock()
-		defer fanLock.Unlock()
 
 		// Send target speed to the unit
 		err = libcomfo.SetSpeed(uint8(tgtSpeed), comfoConn)
