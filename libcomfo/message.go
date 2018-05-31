@@ -5,8 +5,8 @@ import "io"
 // SetRequest is the interface that set requests to the unit
 // must satisfy, as they need to be binary-encoded over the wire.
 type SetRequest interface {
+	requestType() setRequest
 	MarshalBinary() ([]byte, error)
-	Type() setRequest
 }
 
 // Response is the interface that response command
@@ -36,7 +36,7 @@ func EncodeGetRequest(gr getRequest) (out Packet) {
 func EncodeSetRequest(in SetRequest) (out Packet, err error) {
 
 	// Get the type from the SetRequest structure
-	cmd := in.Type()
+	cmd := in.requestType()
 	if cmd == 0 {
 		return out, errRequestType
 	}

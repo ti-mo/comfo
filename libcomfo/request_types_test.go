@@ -77,7 +77,7 @@ func TestSetRequests_MarshalBinary(t *testing.T) {
 			// Marshal the request
 			breq, err := tt.req.MarshalBinary()
 
-			if want, got := tt.rtype, tt.req.Type(); want != got {
+			if want, got := tt.rtype, tt.req.requestType(); want != got {
 				t.Fatalf("unexpected request type:\n- want: %v\n-  got: %v",
 					want, got)
 			}

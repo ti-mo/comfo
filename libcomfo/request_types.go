@@ -41,7 +41,7 @@ type setSpeedT struct {
 	Speed uint8
 }
 
-func (q setSpeedT) Type() setRequest { return setSpeed }
+func (q setSpeedT) requestType() setRequest { return setSpeed }
 func (q setSpeedT) MarshalBinary() (out []byte, err error) {
 
 	if q.Speed > 4 {
@@ -58,7 +58,7 @@ type setComfortT struct {
 	Temperature temperature
 }
 
-func (q setComfortT) Type() setRequest { return setComfort }
+func (q setComfortT) requestType() setRequest { return setComfort }
 func (q setComfortT) MarshalBinary() (out []byte, err error) {
 
 	t, err := q.Temperature.MarshalBinary()
@@ -70,7 +70,7 @@ func (q setComfortT) MarshalBinary() (out []byte, err error) {
 }
 
 // Type returns the FanProfiles set request message code.
-func (q FanProfiles) Type() setRequest { return setFanProfiles }
+func (q FanProfiles) requestType() setRequest { return setFanProfiles }
 
 // MarshalBinary marshals a FanProfiles into a byte representation
 // to be used as a setRequest.
