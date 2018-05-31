@@ -6,16 +6,18 @@ option go_package = "comfo";
 message Noop {}
 
 service Comfo {
-//	rpc GetBootInfo(Noop) returns (BootInfo);
+	// rpc GetBootInfo(Noop) returns (BootInfo);
 	rpc GetTemps(Noop) returns (Temps);
-//	rpc GetBypass(Noop) returns (Bypass);
+	// rpc GetBypass(Noop) returns (Bypass);
 	rpc GetFans(Noop) returns (Fans);
 	rpc GetFanProfiles(Noop) returns (FanProfiles);
-//	rpc GetHours(Noop) returns (Hours);
+	// rpc GetHours(Noop) returns (Hours);
 	rpc GetErrors(Noop) returns (Errors);
 
 	rpc SetFanSpeed(FanSpeedTarget) returns (FanSpeedModified);
 	rpc SetComfortTemp(ComfortTarget) returns (ComfortModified);
+	rpc SetFanProfile(FanProfileTarget) returns (FanProfileModified);
+	// rpc SetFanProfiles(FanProfiles) returns (FanProfilesModified);
 
 	rpc FlushCache(FlushCacheRequest) returns (FlushCacheResponse);
 }
@@ -71,6 +73,18 @@ message FanProfiles {
 	uint32 CurrentOut = 10;
 	uint32 CurrentIn = 11;
 	uint32 CurrentLevel = 12;
+}
+
+message	FanProfileTarget {
+	uint32 Level = 1;
+	uint32 TargetSpeed = 2;
+}
+
+message FanProfileModified {
+	bool Modified = 1; // Whether the level's speed was modified or not
+	uint32 OriginalSpeed = 2; // The fan speed before this modification
+	uint32 TargetSpeed = 3; // Target speed sent in the request
+	string ReqTime = 4; // Total time spent processing the back-end request
 }
 
 // Abs and Rel are mutually exclusive
