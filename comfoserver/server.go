@@ -71,7 +71,7 @@ func (s *Server) SetComfortTemp(ctx context.Context, ct *rpc.ComfortTarget) (*rp
 
 	// Detect truncation
 	if ct.ComfortTemp > math.MaxUint8 {
-		return nil, twirp.InvalidArgumentError("ComfortTemp", "is out of range")
+		return nil, twirp.InvalidArgumentError("ComfortTemp", "is too large")
 	}
 
 	if uint8(origTemp) != targetTemp {
