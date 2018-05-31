@@ -72,16 +72,16 @@ message FanProfiles {
 	
 	uint32 CurrentOut = 10;
 	uint32 CurrentIn = 11;
-	uint32 CurrentLevel = 12;
+	uint32 CurrentMode = 12;
 }
 
 message	FanProfileTarget {
-	uint32 Level = 1;
+	uint32 Mode = 1;
 	uint32 TargetSpeed = 2;
 }
 
 message FanProfileModified {
-	bool Modified = 1; // Whether the level's speed was modified or not
+	bool Modified = 1; // Whether the mode's speed was modified or not
 	uint32 OriginalSpeed = 2; // The fan speed before this modification
 	uint32 TargetSpeed = 3; // Target speed sent in the request
 	string ReqTime = 4; // Total time spent processing the back-end request
