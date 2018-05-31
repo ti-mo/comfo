@@ -1,5 +1,6 @@
 SOURCEDIR = .
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
+RPC_GEN := rpc/comfo/*.go
 
 BINARY = comfo
 ALPINE_BINARY = comfo_alpine
@@ -21,12 +22,11 @@ endif
 .DEFAULT_GOAL: $(BINARY)
 
 # This target needs to be named after the file it generates
-$(BINARY): $(SOURCES) generate
+$(BINARY): $(SOURCES) $(RPC_GEN)
 	CGO_ENABLED=0 go build ${LDFLAGS} -o ${BINARY}
 
-.PHONY: generate
-generate:
-	go generate ./...
+$(RPC_GEN): rpc/comfo/service.proto
+	go generate ./rpc
 
 .PHONY: clean
 clean:
