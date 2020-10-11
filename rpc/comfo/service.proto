@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package comfo.comfoserver;
-option go_package = "comfo";
+option go_package = "github.com/ti-mo/comfo/rpc/comfo;comfo";
 
 message Noop {}
 
@@ -52,7 +52,7 @@ message Errors {
 }
 
 message Fans {
-	uint32 InPercent = 1; 
+	uint32 InPercent = 1;
 	uint32 OutPercent = 2;
 	uint32 InSpeed = 3;
 	uint32 OutSpeed = 4;
@@ -63,13 +63,13 @@ message FanProfiles {
 	uint32 OutLow = 2;
 	uint32 OutMid = 3;
 	uint32 OutHigh = 4;
-	
+
 	bool InFanActive = 5;
 	uint32 InAway = 6;
 	uint32 InLow = 7;
 	uint32 InMid = 8;
 	uint32 InHigh = 9;
-	
+
 	uint32 CurrentOut = 10;
 	uint32 CurrentIn = 11;
 	uint32 CurrentMode = 12;

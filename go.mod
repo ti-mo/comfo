@@ -9,4 +9,5 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07
 	github.com/twitchtv/twirp v7.1.0+incompatible
+	google.golang.org/protobuf v1.23.0
 )

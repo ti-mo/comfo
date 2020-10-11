@@ -25,8 +25,9 @@ endif
 $(BINARY): $(SOURCES) $(RPC_GEN)
 	CGO_ENABLED=0 go build ${LDFLAGS} -o ${BINARY}
 
+generate: $(RPC_GEN)
 $(RPC_GEN): rpc/comfo/service.proto
-	go generate ./rpc
+	go generate ./...
 
 .PHONY: clean
 clean:
