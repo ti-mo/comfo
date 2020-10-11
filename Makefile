@@ -73,20 +73,12 @@ check: test cover
 	megacheck ./...
 	golint -set_exit_status ./...
 
-.ONESHELL:
-.PHONY: gox
-gox:
-	@if [ ! `command -v gox` ]; then
-		echo "Installing gox.."
-		go get -u github.com/mitchellh/gox
-		echo "Successfully installed gox!"
-	fi
-
 .PHONY: release
-release: gox clean_release
-	@CGO_ENABLED=0 gox -osarch="linux/amd64 linux/arm" ${LDFLAGS} --output "${BINARY}_{{.OS}}_{{.Arch}}"
+release: clean_release
+	@CGO_ENABLED=0 GOARCH=amd64 go build ${LDFLAGS} -o "${BINARY}_linux_amd64"
+	@CGO_ENABLED=0 GOARCH=arm go build ${LDFLAGS} -o "${BINARY}_linux_arm"
 
 	echo "Archiving:" *_amd64
 	tar -czvf ${BINARY}-linux-${VERSION}-amd64.tar.gz ${BINARY}_linux_amd64
 	tar -czvf ${BINARY}-linux-${VERSION}-arm.tar.gz ${BINARY}_linux_arm
-	echo "Built artifacts:" *.tar.gz
+	@sh -c "echo 'Built artifacts:' *.tar.gz"
