@@ -11,3 +11,7 @@
 /comfo
 /comfo-*
 /comfo_*
+
+# Python
+__pycache__/
+*.egg-info

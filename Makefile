@@ -1,6 +1,6 @@
 SOURCEDIR = .
 SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
-RPC_GEN := rpc/comfo/*.go
+RPC_GEN := rpc/comfo/*.go python/comfo/*.py
 
 BINARY = comfo
 ALPINE_BINARY = comfo_alpine
@@ -26,7 +26,7 @@ $(BINARY): $(SOURCES) $(RPC_GEN)
 	CGO_ENABLED=0 go build ${LDFLAGS} -o ${BINARY}
 
 generate: $(RPC_GEN)
-$(RPC_GEN): rpc/comfo/service.proto
+$(RPC_GEN): rpc/comfo/comfo.proto
 	go generate ./...
 
 .PHONY: clean

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package comfo.comfoserver;
+package comfo.api;
 option go_package = "github.com/ti-mo/comfo/rpc/comfo;comfo";
 
 message Noop {}
