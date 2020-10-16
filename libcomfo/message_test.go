@@ -20,7 +20,7 @@ func (sr mockSetReq) MarshalBinary() (out []byte, err error) {
 	return sr.mockData, sr.mockErr
 }
 
-func TestTemperature_MarshalBinary(t *testing.T) {
+func TestTemperatureMarshalBinary(t *testing.T) {
 	tests := []struct {
 		name string
 		temp temperature
@@ -73,7 +73,7 @@ func TestTemperature_MarshalBinary(t *testing.T) {
 	}
 }
 
-func TestTemperature_UnmarshalBinary(t *testing.T) {
+func TestTemperatureUnmarshalBinary(t *testing.T) {
 	tests := []struct {
 		name string
 		temp temperature

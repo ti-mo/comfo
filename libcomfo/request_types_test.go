@@ -6,7 +6,7 @@ import (
 )
 
 // Unmarshal-specific corner cases and error checking.
-func TestSetRequests_MarshalBinary(t *testing.T) {
+func TestSetRequestsMarshalBinary(t *testing.T) {
 	tests := []struct {
 		name  string
 		rtype setRequest

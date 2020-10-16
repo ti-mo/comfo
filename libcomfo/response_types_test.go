@@ -6,7 +6,7 @@ import (
 )
 
 // Unmarshal-specific corner cases and error checking.
-func TestAll_UnmarshalBinary(t *testing.T) {
+func TestAllUnmarshalBinary(t *testing.T) {
 	tests := []struct {
 		name  string
 		b     []byte
@@ -206,7 +206,7 @@ func TestAll_UnmarshalBinary(t *testing.T) {
 	}
 }
 
-func TestFanProfiles_Lookup(t *testing.T) {
+func TestFanProfilesLookup(t *testing.T) {
 	fp := FanProfiles{
 		CurrentMode: 1,
 		CurrentIn:   2,
