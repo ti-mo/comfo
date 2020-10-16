@@ -12,6 +12,7 @@ import (
 var (
 	comfoConn io.ReadWriteCloser
 
+	bootInfoCache    BootInfoCache
 	tempCache        TempCache
 	fanCache         FanCache
 	fanProfilesCache FanProfilesCache
@@ -20,6 +21,13 @@ var (
 	flushCache   = make(chan string)
 	flushSuccess = make(chan bool)
 )
+
+// BootInfoCache wraps libcomfo's BootInfo structure with caching data.
+type BootInfoCache struct {
+	libcomfo.BootInfo
+	LastUpdated time.Time  `json:"last_updated"`
+	CacheLock   sync.Mutex `json:"-"`
+}
 
 // TempCache wraps libcomfo's Temps structure with caching data.
 type TempCache struct {
@@ -50,7 +58,10 @@ type ErrorsCache struct {
 }
 
 // UpdateCaches is a macro method to update all data caches of the unit.
+// This is run at startup and must populate fields that are not meant to be
+// refreshed continuously (eg. BootInfo).
 func UpdateCaches(force bool) {
+	bootInfoCache.Update(force)
 	tempCache.Update(force)
 	fanCache.Update(force)
 	fanProfilesCache.Update(force)
@@ -75,6 +86,33 @@ func FlushCaches(cache string) {
 		flushSuccess <- true
 	default:
 		flushSuccess <- false
+	}
+}
+
+// Update executes a libcomfo query to fetch boot (firmware) information
+// from the unit and sets LastUpdated on the cache object.
+// The force parameter ignores the staleness check and updates anyway.
+func (bc *BootInfoCache) Update(force bool) {
+
+	// Lock the cache object.
+	bc.CacheLock.Lock()
+	defer bc.CacheLock.Unlock()
+
+	// Freeze transaction time to start of method.
+	now := time.Now()
+
+	// Do not update cache if we're not forced to
+	// and if the update is not due yet.
+	if !force && !isStale(bc.LastUpdated, now) {
+		return
+	}
+
+	// Call out to the unit and update object.
+	if gb, err := libcomfo.GetBootloader(comfoConn); err == nil {
+		bc.BootInfo = gb
+		bc.LastUpdated = now
+	} else {
+		log.Printf("BootInfoCache.Update() - Error updating boot info cache: %s", err)
 	}
 }
 
