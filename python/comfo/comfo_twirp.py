@@ -16,6 +16,13 @@ class ComfoServer(TwirpServer):
 		super().__init__(service=service)
 		self._prefix = "/twirp/comfo.api.Comfo"
 		self._endpoints = {
+			"GetBootInfo": Endpoint(
+				service_name="Comfo",
+				name="GetBootInfo",
+				function=getattr(service, "GetBootInfo"),
+				input=_sym_db.GetSymbol("comfo.api.Noop"),
+				output=_sym_db.GetSymbol("comfo.api.BootInfo"),
+			),
 			"GetTemps": Endpoint(
 				service_name="Comfo",
 				name="GetTemps",
@@ -75,6 +82,15 @@ class ComfoServer(TwirpServer):
 		}
 
 class ComfoClient(TwirpClient):
+
+	def GetBootInfo(self, *args, ctx, request, **kwargs):
+		return self._make_request(
+			url="/twirp/comfo.api.Comfo/GetBootInfo",
+			ctx=ctx,
+			request=request,
+			response_obj=_sym_db.GetSymbol("comfo.api.BootInfo"),
+			**kwargs,
+		)
 
 	def GetTemps(self, *args, ctx, request, **kwargs):
 		return self._make_request(

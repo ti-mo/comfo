@@ -19,10 +19,50 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'Z&github.com/ti-mo/comfo/rpc/comfo;comfo',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0b\x63omfo.proto\x12\tcomfo.api\"\x06\n\x04Noop\"O\n\x06\x42ypass\x12\x0e\n\x06\x46\x61\x63tor\x18\x01 \x01(\r\x12\r\n\x05Level\x18\x02 \x01(\r\x12\x12\n\nCorrection\x18\x03 \x01(\r\x12\x12\n\nSummerMode\x18\x04 \x01(\x08\"_\n\x08\x42ootInfo\x12\x14\n\x0cMajorVersion\x18\x01 \x01(\r\x12\x14\n\x0cMinorVersion\x18\x02 \x01(\r\x12\x13\n\x0b\x42\x65taVersion\x18\x03 \x01(\r\x12\x12\n\nDeviceName\x18\x04 \x01(\t\"$\n\rComfortTarget\x12\x13\n\x0b\x43omfortTemp\x18\x01 \x01(\r\"^\n\x0f\x43omfortModified\x12\x10\n\x08Modified\x18\x01 \x01(\x08\x12\x14\n\x0cOriginalTemp\x18\x02 \x01(\r\x12\x12\n\nTargetTemp\x18\x03 \x01(\r\x12\x0f\n\x07ReqTime\x18\x04 \x01(\t\"\x18\n\x06\x45rrors\x12\x0e\n\x06\x46ilter\x18\x01 \x01(\x08\"P\n\x04\x46\x61ns\x12\x11\n\tInPercent\x18\x01 \x01(\r\x12\x12\n\nOutPercent\x18\x02 \x01(\r\x12\x0f\n\x07InSpeed\x18\x03 \x01(\r\x12\x10\n\x08OutSpeed\x18\x04 \x01(\r\"\xde\x01\n\x0b\x46\x61nProfiles\x12\x0f\n\x07OutAway\x18\x01 \x01(\r\x12\x0e\n\x06OutLow\x18\x02 \x01(\r\x12\x0e\n\x06OutMid\x18\x03 \x01(\r\x12\x0f\n\x07OutHigh\x18\x04 \x01(\r\x12\x13\n\x0bInFanActive\x18\x05 \x01(\x08\x12\x0e\n\x06InAway\x18\x06 \x01(\r\x12\r\n\x05InLow\x18\x07 \x01(\r\x12\r\n\x05InMid\x18\x08 \x01(\r\x12\x0e\n\x06InHigh\x18\t \x01(\r\x12\x12\n\nCurrentOut\x18\n \x01(\r\x12\x11\n\tCurrentIn\x18\x0b \x01(\r\x12\x13\n\x0b\x43urrentMode\x18\x0c \x01(\r\"5\n\x10\x46\x61nProfileTarget\x12\x0c\n\x04Mode\x18\x01 \x01(\r\x12\x13\n\x0bTargetSpeed\x18\x02 \x01(\r\"c\n\x12\x46\x61nProfileModified\x12\x10\n\x08Modified\x18\x01 \x01(\x08\x12\x15\n\rOriginalSpeed\x18\x02 \x01(\r\x12\x13\n\x0bTargetSpeed\x18\x03 \x01(\r\x12\x0f\n\x07ReqTime\x18\x04 \x01(\t\"*\n\x0e\x46\x61nSpeedTarget\x12\x0b\n\x03\x41\x62s\x18\x01 \x01(\r\x12\x0b\n\x03Rel\x18\x02 \x01(\x08\"a\n\x10\x46\x61nSpeedModified\x12\x10\n\x08Modified\x18\x01 \x01(\x08\x12\x15\n\rOriginalSpeed\x18\x02 \x01(\r\x12\x13\n\x0bTargetSpeed\x18\x03 \x01(\r\x12\x0f\n\x07ReqTime\x18\x04 \x01(\t\"\x96\x01\n\x05Hours\x12\x0f\n\x07\x46\x61nAway\x18\x01 \x01(\r\x12\x0e\n\x06\x46\x61nLow\x18\x02 \x01(\r\x12\x0e\n\x06\x46\x61nMid\x18\x03 \x01(\r\x12\x0f\n\x07\x46\x61nHigh\x18\x04 \x01(\r\x12\x14\n\x0c\x46rostProtect\x18\x05 \x01(\r\x12\x11\n\tReheating\x18\x06 \x01(\r\x12\x12\n\nBypassOpen\x18\x07 \x01(\r\x12\x0e\n\x06\x46ilter\x18\x08 \x01(\r\"\x9c\x01\n\x05Temps\x12\x0f\n\x07\x43omfort\x18\x01 \x01(\x02\x12\x12\n\nOutsideAir\x18\x02 \x01(\x02\x12\x11\n\tSupplyAir\x18\x03 \x01(\x02\x12\x0e\n\x06OutAir\x18\x04 \x01(\x02\x12\x12\n\nExhaustAir\x18\x05 \x01(\x02\x12\x0f\n\x07GeoHeat\x18\x06 \x01(\x02\x12\x11\n\tReheating\x18\x07 \x01(\x02\x12\x13\n\x0bKitchenHood\x18\x08 \x01(\x02\"!\n\x11\x46lushCacheRequest\x12\x0c\n\x04Type\x18\x01 \x01(\t\"6\n\x12\x46lushCacheResponse\x12\x0f\n\x07Success\x18\x01 \x01(\x08\x12\x0f\n\x07ReqTime\x18\x02 \x01(\t2\xf6\x03\n\x05\x43omfo\x12-\n\x08GetTemps\x12\x0f.comfo.api.Noop\x1a\x10.comfo.api.Temps\x12+\n\x07GetFans\x12\x0f.comfo.api.Noop\x1a\x0f.comfo.api.Fans\x12\x39\n\x0eGetFanProfiles\x12\x0f.comfo.api.Noop\x1a\x16.comfo.api.FanProfiles\x12/\n\tGetErrors\x12\x0f.comfo.api.Noop\x1a\x11.comfo.api.Errors\x12\x45\n\x0bSetFanSpeed\x12\x19.comfo.api.FanSpeedTarget\x1a\x1b.comfo.api.FanSpeedModified\x12\x46\n\x0eSetComfortTemp\x12\x18.comfo.api.ComfortTarget\x1a\x1a.comfo.api.ComfortModified\x12K\n\rSetFanProfile\x12\x1b.comfo.api.FanProfileTarget\x1a\x1d.comfo.api.FanProfileModified\x12I\n\nFlushCache\x12\x1c.comfo.api.FlushCacheRequest\x1a\x1d.comfo.api.FlushCacheResponseB(Z&github.com/ti-mo/comfo/rpc/comfo;comfob\x06proto3'
+  serialized_pb=b'\n\x0b\x63omfo.proto\x12\tcomfo.api\"\x06\n\x04Noop\"O\n\x06\x42ypass\x12\x0e\n\x06\x46\x61\x63tor\x18\x01 \x01(\r\x12\r\n\x05Level\x18\x02 \x01(\r\x12\x12\n\nCorrection\x18\x03 \x01(\r\x12\x12\n\nSummerMode\x18\x04 \x01(\x08\"_\n\x08\x42ootInfo\x12\x14\n\x0cMajorVersion\x18\x01 \x01(\r\x12\x14\n\x0cMinorVersion\x18\x02 \x01(\r\x12\x13\n\x0b\x42\x65taVersion\x18\x03 \x01(\r\x12\x12\n\nDeviceName\x18\x04 \x01(\t\"$\n\rComfortTarget\x12\x13\n\x0b\x43omfortTemp\x18\x01 \x01(\r\"^\n\x0f\x43omfortModified\x12\x10\n\x08Modified\x18\x01 \x01(\x08\x12\x14\n\x0cOriginalTemp\x18\x02 \x01(\r\x12\x12\n\nTargetTemp\x18\x03 \x01(\r\x12\x0f\n\x07ReqTime\x18\x04 \x01(\t\"\x18\n\x06\x45rrors\x12\x0e\n\x06\x46ilter\x18\x01 \x01(\x08\"P\n\x04\x46\x61ns\x12\x11\n\tInPercent\x18\x01 \x01(\r\x12\x12\n\nOutPercent\x18\x02 \x01(\r\x12\x0f\n\x07InSpeed\x18\x03 \x01(\r\x12\x10\n\x08OutSpeed\x18\x04 \x01(\r\"\xde\x01\n\x0b\x46\x61nProfiles\x12\x0f\n\x07OutAway\x18\x01 \x01(\r\x12\x0e\n\x06OutLow\x18\x02 \x01(\r\x12\x0e\n\x06OutMid\x18\x03 \x01(\r\x12\x0f\n\x07OutHigh\x18\x04 \x01(\r\x12\x13\n\x0bInFanActive\x18\x05 \x01(\x08\x12\x0e\n\x06InAway\x18\x06 \x01(\r\x12\r\n\x05InLow\x18\x07 \x01(\r\x12\r\n\x05InMid\x18\x08 \x01(\r\x12\x0e\n\x06InHigh\x18\t \x01(\r\x12\x12\n\nCurrentOut\x18\n \x01(\r\x12\x11\n\tCurrentIn\x18\x0b \x01(\r\x12\x13\n\x0b\x43urrentMode\x18\x0c \x01(\r\"5\n\x10\x46\x61nProfileTarget\x12\x0c\n\x04Mode\x18\x01 \x01(\r\x12\x13\n\x0bTargetSpeed\x18\x02 \x01(\r\"c\n\x12\x46\x61nProfileModified\x12\x10\n\x08Modified\x18\x01 \x01(\x08\x12\x15\n\rOriginalSpeed\x18\x02 \x01(\r\x12\x13\n\x0bTargetSpeed\x18\x03 \x01(\r\x12\x0f\n\x07ReqTime\x18\x04 \x01(\t\"*\n\x0e\x46\x61nSpeedTarget\x12\x0b\n\x03\x41\x62s\x18\x01 \x01(\r\x12\x0b\n\x03Rel\x18\x02 \x01(\x08\"a\n\x10\x46\x61nSpeedModified\x12\x10\n\x08Modified\x18\x01 \x01(\x08\x12\x15\n\rOriginalSpeed\x18\x02 \x01(\r\x12\x13\n\x0bTargetSpeed\x18\x03 \x01(\r\x12\x0f\n\x07ReqTime\x18\x04 \x01(\t\"\x96\x01\n\x05Hours\x12\x0f\n\x07\x46\x61nAway\x18\x01 \x01(\r\x12\x0e\n\x06\x46\x61nLow\x18\x02 \x01(\r\x12\x0e\n\x06\x46\x61nMid\x18\x03 \x01(\r\x12\x0f\n\x07\x46\x61nHigh\x18\x04 \x01(\r\x12\x14\n\x0c\x46rostProtect\x18\x05 \x01(\r\x12\x11\n\tReheating\x18\x06 \x01(\r\x12\x12\n\nBypassOpen\x18\x07 \x01(\r\x12\x0e\n\x06\x46ilter\x18\x08 \x01(\r\"\x9c\x01\n\x05Temps\x12\x0f\n\x07\x43omfort\x18\x01 \x01(\x02\x12\x12\n\nOutsideAir\x18\x02 \x01(\x02\x12\x11\n\tSupplyAir\x18\x03 \x01(\x02\x12\x0e\n\x06OutAir\x18\x04 \x01(\x02\x12\x12\n\nExhaustAir\x18\x05 \x01(\x02\x12\x0f\n\x07GeoHeat\x18\x06 \x01(\x02\x12\x11\n\tReheating\x18\x07 \x01(\x02\x12\x13\n\x0bKitchenHood\x18\x08 \x01(\x02\"\x91\x01\n\x11\x46lushCacheRequest\x12\x35\n\x05\x43\x61\x63he\x18\x01 \x01(\x0e\x32&.comfo.api.FlushCacheRequest.CacheType\"E\n\tCacheType\x12\x0c\n\x08\x42ootInfo\x10\x00\x12\x08\n\x04\x46\x61ns\x10\x01\x12\t\n\x05Temps\x10\x02\x12\x0c\n\x08Profiles\x10\x03\x12\x07\n\x03\x41ll\x10\n\"6\n\x12\x46lushCacheResponse\x12\x0f\n\x07Success\x18\x01 \x01(\x08\x12\x0f\n\x07ReqTime\x18\x02 \x01(\t2\xab\x04\n\x05\x43omfo\x12\x33\n\x0bGetBootInfo\x12\x0f.comfo.api.Noop\x1a\x13.comfo.api.BootInfo\x12-\n\x08GetTemps\x12\x0f.comfo.api.Noop\x1a\x10.comfo.api.Temps\x12+\n\x07GetFans\x12\x0f.comfo.api.Noop\x1a\x0f.comfo.api.Fans\x12\x39\n\x0eGetFanProfiles\x12\x0f.comfo.api.Noop\x1a\x16.comfo.api.FanProfiles\x12/\n\tGetErrors\x12\x0f.comfo.api.Noop\x1a\x11.comfo.api.Errors\x12\x45\n\x0bSetFanSpeed\x12\x19.comfo.api.FanSpeedTarget\x1a\x1b.comfo.api.FanSpeedModified\x12\x46\n\x0eSetComfortTemp\x12\x18.comfo.api.ComfortTarget\x1a\x1a.comfo.api.ComfortModified\x12K\n\rSetFanProfile\x12\x1b.comfo.api.FanProfileTarget\x1a\x1d.comfo.api.FanProfileModified\x12I\n\nFlushCache\x12\x1c.comfo.api.FlushCacheRequest\x1a\x1d.comfo.api.FlushCacheResponseB(Z&github.com/ti-mo/comfo/rpc/comfo;comfob\x06proto3'
 )
 
 
+
+_FLUSHCACHEREQUEST_CACHETYPE = _descriptor.EnumDescriptor(
+  name='CacheType',
+  full_name='comfo.api.FlushCacheRequest.CacheType',
+  filename=None,
+  file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='BootInfo', index=0, number=0,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='Fans', index=1, number=1,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='Temps', index=2, number=2,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='Profiles', index=3, number=3,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='All', index=4, number=10,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=1367,
+  serialized_end=1436,
+)
+_sym_db.RegisterEnumDescriptor(_FLUSHCACHEREQUEST_CACHETYPE)
 
 
 _NOOP = _descriptor.Descriptor(
@@ -790,9 +830,9 @@ _FLUSHCACHEREQUEST = _descriptor.Descriptor(
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='Type', full_name='comfo.api.FlushCacheRequest.Type', index=0,
-      number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=b"".decode('utf-8'),
+      name='Cache', full_name='comfo.api.FlushCacheRequest.Cache', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -801,6 +841,7 @@ _FLUSHCACHEREQUEST = _descriptor.Descriptor(
   ],
   nested_types=[],
   enum_types=[
+    _FLUSHCACHEREQUEST_CACHETYPE,
   ],
   serialized_options=None,
   is_extendable=False,
@@ -808,8 +849,8 @@ _FLUSHCACHEREQUEST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1290,
-  serialized_end=1323,
+  serialized_start=1291,
+  serialized_end=1436,
 )
 
 
@@ -847,10 +888,12 @@ _FLUSHCACHERESPONSE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=1325,
-  serialized_end=1379,
+  serialized_start=1438,
+  serialized_end=1492,
 )
 
+_FLUSHCACHEREQUEST.fields_by_name['Cache'].enum_type = _FLUSHCACHEREQUEST_CACHETYPE
+_FLUSHCACHEREQUEST_CACHETYPE.containing_type = _FLUSHCACHEREQUEST
 DESCRIPTOR.message_types_by_name['Noop'] = _NOOP
 DESCRIPTOR.message_types_by_name['Bypass'] = _BYPASS
 DESCRIPTOR.message_types_by_name['BootInfo'] = _BOOTINFO
@@ -991,13 +1034,23 @@ _COMFO = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=1382,
-  serialized_end=1884,
+  serialized_start=1495,
+  serialized_end=2050,
   methods=[
+  _descriptor.MethodDescriptor(
+    name='GetBootInfo',
+    full_name='comfo.api.Comfo.GetBootInfo',
+    index=0,
+    containing_service=None,
+    input_type=_NOOP,
+    output_type=_BOOTINFO,
+    serialized_options=None,
+    create_key=_descriptor._internal_create_key,
+  ),
   _descriptor.MethodDescriptor(
     name='GetTemps',
     full_name='comfo.api.Comfo.GetTemps',
-    index=0,
+    index=1,
     containing_service=None,
     input_type=_NOOP,
     output_type=_TEMPS,
@@ -1007,7 +1060,7 @@ _COMFO = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='GetFans',
     full_name='comfo.api.Comfo.GetFans',
-    index=1,
+    index=2,
     containing_service=None,
     input_type=_NOOP,
     output_type=_FANS,
@@ -1017,7 +1070,7 @@ _COMFO = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='GetFanProfiles',
     full_name='comfo.api.Comfo.GetFanProfiles',
-    index=2,
+    index=3,
     containing_service=None,
     input_type=_NOOP,
     output_type=_FANPROFILES,
@@ -1027,7 +1080,7 @@ _COMFO = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='GetErrors',
     full_name='comfo.api.Comfo.GetErrors',
-    index=3,
+    index=4,
     containing_service=None,
     input_type=_NOOP,
     output_type=_ERRORS,
@@ -1037,7 +1090,7 @@ _COMFO = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='SetFanSpeed',
     full_name='comfo.api.Comfo.SetFanSpeed',
-    index=4,
+    index=5,
     containing_service=None,
     input_type=_FANSPEEDTARGET,
     output_type=_FANSPEEDMODIFIED,
@@ -1047,7 +1100,7 @@ _COMFO = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='SetComfortTemp',
     full_name='comfo.api.Comfo.SetComfortTemp',
-    index=5,
+    index=6,
     containing_service=None,
     input_type=_COMFORTTARGET,
     output_type=_COMFORTMODIFIED,
@@ -1057,7 +1110,7 @@ _COMFO = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='SetFanProfile',
     full_name='comfo.api.Comfo.SetFanProfile',
-    index=6,
+    index=7,
     containing_service=None,
     input_type=_FANPROFILETARGET,
     output_type=_FANPROFILEMODIFIED,
@@ -1067,7 +1120,7 @@ _COMFO = _descriptor.ServiceDescriptor(
   _descriptor.MethodDescriptor(
     name='FlushCache',
     full_name='comfo.api.Comfo.FlushCache',
-    index=7,
+    index=8,
     containing_service=None,
     input_type=_FLUSHCACHEREQUEST,
     output_type=_FLUSHCACHERESPONSE,
