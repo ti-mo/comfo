@@ -216,7 +216,7 @@ func (s *Server) FlushCache(ctx context.Context, fcr *rpc.FlushCacheRequest) (*r
 	start := time.Now()
 
 	// Feed the 'cache' URI parameter to the flush worker
-	flushCache <- fcr.Type
+	flushCache <- fcr.Cache
 
 	// Build response
 	return &rpc.FlushCacheResponse{

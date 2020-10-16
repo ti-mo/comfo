@@ -18,7 +18,7 @@ var (
 	fanProfilesCache FanProfilesCache
 	errorsCache      ErrorsCache
 
-	flushCache   = make(chan string)
+	flushCache   = make(chan CacheType)
 	flushSuccess = make(chan bool)
 )
 
@@ -70,18 +70,21 @@ func UpdateCaches(force bool) {
 
 // FlushCaches manages forced cache flushes for all components and
 // sends messages down the flushSuccess channel.
-func FlushCaches(cache string) {
+func FlushCaches(cache CacheType) {
 	switch cache {
-	case "fans":
+	case BootInfo:
+		bootInfoCache.Update(true)
+		flushSuccess <- true
+	case Fans:
 		fanCache.Update(true)
 		flushSuccess <- true
-	case "temps":
+	case Temps:
 		tempCache.Update(true)
 		flushSuccess <- true
-	case "profiles":
+	case Profiles:
 		fanProfilesCache.Update(true)
 		flushSuccess <- true
-	case "all":
+	case All:
 		UpdateCaches(true)
 		flushSuccess <- true
 	default:
