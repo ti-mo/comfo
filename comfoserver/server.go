@@ -29,27 +29,28 @@ type Server struct{}
 // Getters return information about the unit.
 //
 
-// GetErrors returns a unit errors cache protobuf.
-func (s *Server) GetErrors(context.Context, *rpc.Noop) (*rpc.Errors, error) {
+// GetBootInfo returns a cached BootInfo protobuf.
+func (s *Server) GetBootInfo(context.Context, *rpc.Noop) (*rpc.BootInfo, error) {
+	return bootInfoCache.Protobuf(), nil
+}
 
+// GetErrors returns a cached Errors protobuf.
+func (s *Server) GetErrors(context.Context, *rpc.Noop) (*rpc.Errors, error) {
 	return errorsCache.Protobuf(), nil
 }
 
 // GetFans returns a fan speed cache protobuf.
 func (s *Server) GetFans(context.Context, *rpc.Noop) (*rpc.Fans, error) {
-
 	return fanCache.Protobuf(), nil
 }
 
 // GetFanProfiles returns a fan speed profiles cache protobuf.
 func (s *Server) GetFanProfiles(context.Context, *rpc.Noop) (*rpc.FanProfiles, error) {
-
 	return fanProfilesCache.Protobuf(), nil
 }
 
 // GetTemps returns a temperature cache protobuf.
 func (s *Server) GetTemps(context.Context, *rpc.Noop) (*rpc.Temps, error) {
-
 	return tempCache.Protobuf(), nil
 }
 
@@ -215,7 +216,7 @@ func (s *Server) FlushCache(ctx context.Context, fcr *rpc.FlushCacheRequest) (*r
 	start := time.Now()
 
 	// Feed the 'cache' URI parameter to the flush worker
-	flushCache <- fcr.Type
+	flushCache <- fcr.Cache
 
 	// Build response
 	return &rpc.FlushCacheResponse{

@@ -6,128 +6,134 @@ option go_package = "github.com/ti-mo/comfo/rpc/comfo;comfo";
 message Noop {}
 
 service Comfo {
-	// rpc GetBootInfo(Noop) returns (BootInfo);
-	rpc GetTemps(Noop) returns (Temps);
-	// rpc GetBypass(Noop) returns (Bypass);
-	rpc GetFans(Noop) returns (Fans);
-	rpc GetFanProfiles(Noop) returns (FanProfiles);
-	// rpc GetHours(Noop) returns (Hours);
-	rpc GetErrors(Noop) returns (Errors);
+  rpc GetBootInfo(Noop) returns (BootInfo);
+  rpc GetTemps(Noop) returns (Temps);
+  // rpc GetBypass(Noop) returns (Bypass);
+  rpc GetFans(Noop) returns (Fans);
+  rpc GetFanProfiles(Noop) returns (FanProfiles);
+  // rpc GetHours(Noop) returns (Hours);
+  rpc GetErrors(Noop) returns (Errors);
 
-	rpc SetFanSpeed(FanSpeedTarget) returns (FanSpeedModified);
-	rpc SetComfortTemp(ComfortTarget) returns (ComfortModified);
-	rpc SetFanProfile(FanProfileTarget) returns (FanProfileModified);
-	// rpc SetFanProfiles(FanProfiles) returns (FanProfilesModified);
+  rpc SetFanSpeed(FanSpeedTarget) returns (FanSpeedModified);
+  rpc SetComfortTemp(ComfortTarget) returns (ComfortModified);
+  rpc SetFanProfile(FanProfileTarget) returns (FanProfileModified);
+  // rpc SetFanProfiles(FanProfiles) returns (FanProfilesModified);
 
-	rpc FlushCache(FlushCacheRequest) returns (FlushCacheResponse);
+  rpc FlushCache(FlushCacheRequest) returns (FlushCacheResponse);
 }
 
 message Bypass {
-	uint32 Factor = 1;
-	uint32 Level = 2;
-	uint32 Correction = 3;
-	bool SummerMode = 4;
+  uint32 Factor = 1;
+  uint32 Level = 2;
+  uint32 Correction = 3;
+  bool SummerMode = 4;
 }
 
 message BootInfo {
-	uint32 MajorVersion = 1;
-	uint32 MinorVersion = 2;
-	uint32 BetaVersion = 3;
-	string DeviceName = 4;
+  uint32 MajorVersion = 1;
+  uint32 MinorVersion = 2;
+  uint32 BetaVersion = 3;
+  string DeviceName = 4;
 }
 
 message ComfortTarget {
-	uint32 ComfortTemp = 1; // Desired temperature for the heat exchanger
+  uint32 ComfortTemp = 1; // Desired temperature for the heat exchanger.
 }
 
 message ComfortModified {
-	bool Modified = 1; // Whether the comfort temperature was modified or not
-	uint32 OriginalTemp = 2; // The temperature before this modification
-	uint32 TargetTemp = 3; // Target temperature sent in the request
-	string ReqTime = 4; // Total time spent processing the back-end request
+  bool Modified = 1; // Whether the comfort temperature was modified or not.
+  uint32 OriginalTemp = 2; // The temperature before this modification.
+  uint32 TargetTemp = 3;   // Target temperature sent in the request.
+  string ReqTime = 4;      // Total time spent processing the back-end request.
 }
 
-message Errors {
-	bool Filter = 1;
-}
+message Errors { bool Filter = 1; }
 
 message Fans {
-	uint32 InPercent = 1;
-	uint32 OutPercent = 2;
-	uint32 InSpeed = 3;
-	uint32 OutSpeed = 4;
+  uint32 InPercent = 1;
+  uint32 OutPercent = 2;
+  uint32 InSpeed = 3;
+  uint32 OutSpeed = 4;
 }
 
 message FanProfiles {
-	uint32 OutAway = 1;
-	uint32 OutLow = 2;
-	uint32 OutMid = 3;
-	uint32 OutHigh = 4;
+  uint32 OutAway = 1;
+  uint32 OutLow = 2;
+  uint32 OutMid = 3;
+  uint32 OutHigh = 4;
 
-	bool InFanActive = 5;
-	uint32 InAway = 6;
-	uint32 InLow = 7;
-	uint32 InMid = 8;
-	uint32 InHigh = 9;
+  bool InFanActive = 5;
+  uint32 InAway = 6;
+  uint32 InLow = 7;
+  uint32 InMid = 8;
+  uint32 InHigh = 9;
 
-	uint32 CurrentOut = 10;
-	uint32 CurrentIn = 11;
-	uint32 CurrentMode = 12;
+  uint32 CurrentOut = 10;
+  uint32 CurrentIn = 11;
+  uint32 CurrentMode = 12;
 }
 
-message	FanProfileTarget {
-	uint32 Mode = 1;
-	uint32 TargetSpeed = 2;
+message FanProfileTarget {
+  uint32 Mode = 1;
+  uint32 TargetSpeed = 2;
 }
 
 message FanProfileModified {
-	bool Modified = 1; // Whether the mode's speed was modified or not
-	uint32 OriginalSpeed = 2; // The fan speed before this modification
-	uint32 TargetSpeed = 3; // Target speed sent in the request
-	string ReqTime = 4; // Total time spent processing the back-end request
+  bool Modified = 1;        // Whether the mode's speed was modified or not.
+  uint32 OriginalSpeed = 2; // The fan speed before this modification.
+  uint32 TargetSpeed = 3;   // Target speed sent in the request.
+  string ReqTime = 4;       // Total time spent processing the back-end request.
 }
 
 // Abs and Rel are mutually exclusive
 message FanSpeedTarget {
-	uint32 Abs = 1; // must be between 1 and 4
-	bool Rel = 2; // False = down, True = up
+  uint32 Abs = 1; // must be between 1 and 4
+  bool Rel = 2;   // False = down, True = up
 }
 
 message FanSpeedModified {
-	bool Modified = 1; // Whether the fan speed was modified or not
-	uint32 OriginalSpeed = 2; // The fan speed before this modification
-	uint32 TargetSpeed = 3; // Target speed sent in the request
-	string ReqTime = 4; // Total time spent processing the back-end request
+  bool Modified = 1;        // Whether the fan speed was modified or not.
+  uint32 OriginalSpeed = 2; // The fan speed before this modification.
+  uint32 TargetSpeed = 3;   // Target speed sent in the request.
+  string ReqTime = 4;       // Total time spent processing the back-end request.
 }
 
 message Hours {
-	uint32 FanAway = 1;
-	uint32 FanLow = 2;
-	uint32 FanMid = 3;
-	uint32 FanHigh = 4;
-	uint32 FrostProtect = 5;
-	uint32 Reheating = 6;
-	uint32 BypassOpen = 7;
-	uint32 Filter = 8;
+  uint32 FanAway = 1;
+  uint32 FanLow = 2;
+  uint32 FanMid = 3;
+  uint32 FanHigh = 4;
+  uint32 FrostProtect = 5;
+  uint32 Reheating = 6;
+  uint32 BypassOpen = 7;
+  uint32 Filter = 8;
 }
 
 message Temps {
-	float Comfort = 1;
-	float OutsideAir = 2;
-	float SupplyAir = 3;
-	float OutAir = 4;
-	float ExhaustAir = 5;
-	float GeoHeat = 6;
-	float Reheating = 7;
-	float KitchenHood = 8;
+  float Comfort = 1;
+  float OutsideAir = 2;
+  float SupplyAir = 3;
+  float OutAir = 4;
+  float ExhaustAir = 5;
+  float GeoHeat = 6;
+  float Reheating = 7;
+  float KitchenHood = 8;
 }
 
 message FlushCacheRequest {
-	// The type of cache to flush. One of all/fans/temps/profiles.
-	string Type = 1; // required
+  enum CacheType {
+    BootInfo = 0;
+    Fans = 1;
+    Temps = 2;
+    Profiles = 3;
+    All = 10;
+  }
+
+  // The type of cache to flush.
+  CacheType Cache = 1;
 }
 
 message FlushCacheResponse {
-	bool Success = 1; // Whether the flush operation was successful
-	string ReqTime = 2; // Total time spent processing the back-end request
+  bool Success = 1;   // Whether the flush operation was successful.
+  string ReqTime = 2; // Total time spent processing the back-end request.
 }

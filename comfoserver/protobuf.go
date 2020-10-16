@@ -4,8 +4,37 @@ import (
 	rpc "github.com/ti-mo/comfo/rpc/comfo"
 )
 
-// Protobuf returns a protobuf representation of TempCache
+type CacheType = rpc.FlushCacheRequest_CacheType
+
+const (
+	BootInfo = rpc.FlushCacheRequest_BootInfo
+	Fans     = rpc.FlushCacheRequest_Fans
+	Temps    = rpc.FlushCacheRequest_Temps
+	Profiles = rpc.FlushCacheRequest_Profiles
+	All      = rpc.FlushCacheRequest_All
+)
+
+// Protobuf takes out a lock on the BootInfoCache
+// and returns a protobuf representation of BootInfo.
+func (b *BootInfoCache) Protobuf() *rpc.BootInfo {
+
+	b.CacheLock.Lock()
+	defer b.CacheLock.Unlock()
+
+	return &rpc.BootInfo{
+		BetaVersion:  uint32(b.BetaVersion),
+		MajorVersion: uint32(b.MajorVersion),
+		MinorVersion: uint32(b.MinorVersion),
+		DeviceName:   b.DeviceName,
+	}
+}
+
+// Protobuf takes out a lock on the TempCache and
+// returns a protobuf representation of Temps.
 func (t *TempCache) Protobuf() (pb *rpc.Temps) {
+
+	t.CacheLock.Lock()
+	defer t.CacheLock.Unlock()
 
 	return &rpc.Temps{
 		Comfort:     float32(t.Comfort),
@@ -19,8 +48,12 @@ func (t *TempCache) Protobuf() (pb *rpc.Temps) {
 	}
 }
 
-// Protobuf returns a protobuf representation of FanCache.
+// Protobuf takes out a lock on the FanCache and
+// returns a protobuf representation of Fans.
 func (f *FanCache) Protobuf() (pb *rpc.Fans) {
+
+	f.CacheLock.Lock()
+	defer f.CacheLock.Unlock()
 
 	return &rpc.Fans{
 		InPercent:  uint32(f.InPercent),
@@ -30,8 +63,12 @@ func (f *FanCache) Protobuf() (pb *rpc.Fans) {
 	}
 }
 
-// Protobuf returns a protobuf representation of FanProfilesCache.
+// Protobuf takes out a lock on the FanProfilesCache and
+// returns a protobuf representation of FanProfiles.
 func (fp *FanProfilesCache) Protobuf() (pb *rpc.FanProfiles) {
+
+	fp.CacheLock.Lock()
+	defer fp.CacheLock.Unlock()
 
 	return &rpc.FanProfiles{
 		OutAway: uint32(fp.OutAway),
@@ -51,8 +88,12 @@ func (fp *FanProfilesCache) Protobuf() (pb *rpc.FanProfiles) {
 	}
 }
 
-// Protobuf returns a protobuf representation of ErrorsCache.
+// Protobuf takes out a lock on the ErrorsCache and
+// returns a protobuf representation of Errors.
 func (e *ErrorsCache) Protobuf() (pb *rpc.Errors) {
+
+	e.CacheLock.Lock()
+	defer e.CacheLock.Unlock()
 
 	return &rpc.Errors{
 		Filter: e.Filter,
