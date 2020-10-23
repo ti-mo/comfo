@@ -10,172 +10,172 @@ from twirp.client import TwirpClient
 
 _sym_db = _symbol_database.Default()
 
-class ComfoServer(TwirpServer):
 
-	def __init__(self, *args, service):
-		super().__init__(service=service)
-		self._prefix = "/twirp/comfo.api.Comfo"
-		self._endpoints = {
-			"GetBootInfo": Endpoint(
-				service_name="Comfo",
-				name="GetBootInfo",
-				function=getattr(service, "GetBootInfo"),
-				input=_sym_db.GetSymbol("comfo.api.Noop"),
-				output=_sym_db.GetSymbol("comfo.api.BootInfo"),
-			),
-			"GetTemps": Endpoint(
-				service_name="Comfo",
-				name="GetTemps",
-				function=getattr(service, "GetTemps"),
-				input=_sym_db.GetSymbol("comfo.api.Noop"),
-				output=_sym_db.GetSymbol("comfo.api.Temps"),
-			),
-			"GetBypass": Endpoint(
-				service_name="Comfo",
-				name="GetBypass",
-				function=getattr(service, "GetBypass"),
-				input=_sym_db.GetSymbol("comfo.api.Noop"),
-				output=_sym_db.GetSymbol("comfo.api.Bypass"),
-			),
-			"GetFans": Endpoint(
-				service_name="Comfo",
-				name="GetFans",
-				function=getattr(service, "GetFans"),
-				input=_sym_db.GetSymbol("comfo.api.Noop"),
-				output=_sym_db.GetSymbol("comfo.api.Fans"),
-			),
-			"GetFanProfiles": Endpoint(
-				service_name="Comfo",
-				name="GetFanProfiles",
-				function=getattr(service, "GetFanProfiles"),
-				input=_sym_db.GetSymbol("comfo.api.Noop"),
-				output=_sym_db.GetSymbol("comfo.api.FanProfiles"),
-			),
-			"GetErrors": Endpoint(
-				service_name="Comfo",
-				name="GetErrors",
-				function=getattr(service, "GetErrors"),
-				input=_sym_db.GetSymbol("comfo.api.Noop"),
-				output=_sym_db.GetSymbol("comfo.api.Errors"),
-			),
-			"SetFanSpeed": Endpoint(
-				service_name="Comfo",
-				name="SetFanSpeed",
-				function=getattr(service, "SetFanSpeed"),
-				input=_sym_db.GetSymbol("comfo.api.FanSpeedTarget"),
-				output=_sym_db.GetSymbol("comfo.api.FanSpeedModified"),
-			),
-			"SetComfortTemp": Endpoint(
-				service_name="Comfo",
-				name="SetComfortTemp",
-				function=getattr(service, "SetComfortTemp"),
-				input=_sym_db.GetSymbol("comfo.api.ComfortTarget"),
-				output=_sym_db.GetSymbol("comfo.api.ComfortModified"),
-			),
-			"SetFanProfile": Endpoint(
-				service_name="Comfo",
-				name="SetFanProfile",
-				function=getattr(service, "SetFanProfile"),
-				input=_sym_db.GetSymbol("comfo.api.FanProfileTarget"),
-				output=_sym_db.GetSymbol("comfo.api.FanProfileModified"),
-			),
-			"FlushCache": Endpoint(
-				service_name="Comfo",
-				name="FlushCache",
-				function=getattr(service, "FlushCache"),
-				input=_sym_db.GetSymbol("comfo.api.FlushCacheRequest"),
-				output=_sym_db.GetSymbol("comfo.api.FlushCacheResponse"),
-			),
-		}
+class ComfoServer(TwirpServer):
+    def __init__(self, *args, service):
+        super().__init__(service=service)
+        self._prefix = "/twirp/comfo.api.Comfo"
+        self._endpoints = {
+            "GetBootInfo": Endpoint(
+                service_name="Comfo",
+                name="GetBootInfo",
+                function=getattr(service, "GetBootInfo"),
+                input=_sym_db.GetSymbol("comfo.api.Noop"),
+                output=_sym_db.GetSymbol("comfo.api.BootInfo"),
+            ),
+            "GetTemps": Endpoint(
+                service_name="Comfo",
+                name="GetTemps",
+                function=getattr(service, "GetTemps"),
+                input=_sym_db.GetSymbol("comfo.api.Noop"),
+                output=_sym_db.GetSymbol("comfo.api.Temps"),
+            ),
+            "GetBypass": Endpoint(
+                service_name="Comfo",
+                name="GetBypass",
+                function=getattr(service, "GetBypass"),
+                input=_sym_db.GetSymbol("comfo.api.Noop"),
+                output=_sym_db.GetSymbol("comfo.api.Bypass"),
+            ),
+            "GetFans": Endpoint(
+                service_name="Comfo",
+                name="GetFans",
+                function=getattr(service, "GetFans"),
+                input=_sym_db.GetSymbol("comfo.api.Noop"),
+                output=_sym_db.GetSymbol("comfo.api.Fans"),
+            ),
+            "GetFanProfiles": Endpoint(
+                service_name="Comfo",
+                name="GetFanProfiles",
+                function=getattr(service, "GetFanProfiles"),
+                input=_sym_db.GetSymbol("comfo.api.Noop"),
+                output=_sym_db.GetSymbol("comfo.api.FanProfiles"),
+            ),
+            "GetErrors": Endpoint(
+                service_name="Comfo",
+                name="GetErrors",
+                function=getattr(service, "GetErrors"),
+                input=_sym_db.GetSymbol("comfo.api.Noop"),
+                output=_sym_db.GetSymbol("comfo.api.Errors"),
+            ),
+            "SetFanSpeed": Endpoint(
+                service_name="Comfo",
+                name="SetFanSpeed",
+                function=getattr(service, "SetFanSpeed"),
+                input=_sym_db.GetSymbol("comfo.api.FanSpeedTarget"),
+                output=_sym_db.GetSymbol("comfo.api.FanSpeedModified"),
+            ),
+            "SetComfortTemp": Endpoint(
+                service_name="Comfo",
+                name="SetComfortTemp",
+                function=getattr(service, "SetComfortTemp"),
+                input=_sym_db.GetSymbol("comfo.api.ComfortTarget"),
+                output=_sym_db.GetSymbol("comfo.api.ComfortModified"),
+            ),
+            "SetFanProfile": Endpoint(
+                service_name="Comfo",
+                name="SetFanProfile",
+                function=getattr(service, "SetFanProfile"),
+                input=_sym_db.GetSymbol("comfo.api.FanProfileTarget"),
+                output=_sym_db.GetSymbol("comfo.api.FanProfileModified"),
+            ),
+            "FlushCache": Endpoint(
+                service_name="Comfo",
+                name="FlushCache",
+                function=getattr(service, "FlushCache"),
+                input=_sym_db.GetSymbol("comfo.api.FlushCacheRequest"),
+                output=_sym_db.GetSymbol("comfo.api.FlushCacheResponse"),
+            ),
+        }
+
 
 class ComfoClient(TwirpClient):
+    def GetBootInfo(self, *args, ctx, request, **kwargs):
+        return self._make_request(
+            url="/twirp/comfo.api.Comfo/GetBootInfo",
+            ctx=ctx,
+            request=request,
+            response_obj=_sym_db.GetSymbol("comfo.api.BootInfo"),
+            **kwargs,
+        )
 
-	def GetBootInfo(self, *args, ctx, request, **kwargs):
-		return self._make_request(
-			url="/twirp/comfo.api.Comfo/GetBootInfo",
-			ctx=ctx,
-			request=request,
-			response_obj=_sym_db.GetSymbol("comfo.api.BootInfo"),
-			**kwargs,
-		)
+    def GetTemps(self, *args, ctx, request, **kwargs):
+        return self._make_request(
+            url="/twirp/comfo.api.Comfo/GetTemps",
+            ctx=ctx,
+            request=request,
+            response_obj=_sym_db.GetSymbol("comfo.api.Temps"),
+            **kwargs,
+        )
 
-	def GetTemps(self, *args, ctx, request, **kwargs):
-		return self._make_request(
-			url="/twirp/comfo.api.Comfo/GetTemps",
-			ctx=ctx,
-			request=request,
-			response_obj=_sym_db.GetSymbol("comfo.api.Temps"),
-			**kwargs,
-		)
+    def GetBypass(self, *args, ctx, request, **kwargs):
+        return self._make_request(
+            url="/twirp/comfo.api.Comfo/GetBypass",
+            ctx=ctx,
+            request=request,
+            response_obj=_sym_db.GetSymbol("comfo.api.Bypass"),
+            **kwargs,
+        )
 
-	def GetBypass(self, *args, ctx, request, **kwargs):
-		return self._make_request(
-			url="/twirp/comfo.api.Comfo/GetBypass",
-			ctx=ctx,
-			request=request,
-			response_obj=_sym_db.GetSymbol("comfo.api.Bypass"),
-			**kwargs,
-		)
+    def GetFans(self, *args, ctx, request, **kwargs):
+        return self._make_request(
+            url="/twirp/comfo.api.Comfo/GetFans",
+            ctx=ctx,
+            request=request,
+            response_obj=_sym_db.GetSymbol("comfo.api.Fans"),
+            **kwargs,
+        )
 
-	def GetFans(self, *args, ctx, request, **kwargs):
-		return self._make_request(
-			url="/twirp/comfo.api.Comfo/GetFans",
-			ctx=ctx,
-			request=request,
-			response_obj=_sym_db.GetSymbol("comfo.api.Fans"),
-			**kwargs,
-		)
+    def GetFanProfiles(self, *args, ctx, request, **kwargs):
+        return self._make_request(
+            url="/twirp/comfo.api.Comfo/GetFanProfiles",
+            ctx=ctx,
+            request=request,
+            response_obj=_sym_db.GetSymbol("comfo.api.FanProfiles"),
+            **kwargs,
+        )
 
-	def GetFanProfiles(self, *args, ctx, request, **kwargs):
-		return self._make_request(
-			url="/twirp/comfo.api.Comfo/GetFanProfiles",
-			ctx=ctx,
-			request=request,
-			response_obj=_sym_db.GetSymbol("comfo.api.FanProfiles"),
-			**kwargs,
-		)
+    def GetErrors(self, *args, ctx, request, **kwargs):
+        return self._make_request(
+            url="/twirp/comfo.api.Comfo/GetErrors",
+            ctx=ctx,
+            request=request,
+            response_obj=_sym_db.GetSymbol("comfo.api.Errors"),
+            **kwargs,
+        )
 
-	def GetErrors(self, *args, ctx, request, **kwargs):
-		return self._make_request(
-			url="/twirp/comfo.api.Comfo/GetErrors",
-			ctx=ctx,
-			request=request,
-			response_obj=_sym_db.GetSymbol("comfo.api.Errors"),
-			**kwargs,
-		)
+    def SetFanSpeed(self, *args, ctx, request, **kwargs):
+        return self._make_request(
+            url="/twirp/comfo.api.Comfo/SetFanSpeed",
+            ctx=ctx,
+            request=request,
+            response_obj=_sym_db.GetSymbol("comfo.api.FanSpeedModified"),
+            **kwargs,
+        )
 
-	def SetFanSpeed(self, *args, ctx, request, **kwargs):
-		return self._make_request(
-			url="/twirp/comfo.api.Comfo/SetFanSpeed",
-			ctx=ctx,
-			request=request,
-			response_obj=_sym_db.GetSymbol("comfo.api.FanSpeedModified"),
-			**kwargs,
-		)
+    def SetComfortTemp(self, *args, ctx, request, **kwargs):
+        return self._make_request(
+            url="/twirp/comfo.api.Comfo/SetComfortTemp",
+            ctx=ctx,
+            request=request,
+            response_obj=_sym_db.GetSymbol("comfo.api.ComfortModified"),
+            **kwargs,
+        )
 
-	def SetComfortTemp(self, *args, ctx, request, **kwargs):
-		return self._make_request(
-			url="/twirp/comfo.api.Comfo/SetComfortTemp",
-			ctx=ctx,
-			request=request,
-			response_obj=_sym_db.GetSymbol("comfo.api.ComfortModified"),
-			**kwargs,
-		)
+    def SetFanProfile(self, *args, ctx, request, **kwargs):
+        return self._make_request(
+            url="/twirp/comfo.api.Comfo/SetFanProfile",
+            ctx=ctx,
+            request=request,
+            response_obj=_sym_db.GetSymbol("comfo.api.FanProfileModified"),
+            **kwargs,
+        )
 
-	def SetFanProfile(self, *args, ctx, request, **kwargs):
-		return self._make_request(
-			url="/twirp/comfo.api.Comfo/SetFanProfile",
-			ctx=ctx,
-			request=request,
-			response_obj=_sym_db.GetSymbol("comfo.api.FanProfileModified"),
-			**kwargs,
-		)
-
-	def FlushCache(self, *args, ctx, request, **kwargs):
-		return self._make_request(
-			url="/twirp/comfo.api.Comfo/FlushCache",
-			ctx=ctx,
-			request=request,
-			response_obj=_sym_db.GetSymbol("comfo.api.FlushCacheResponse"),
-			**kwargs,
-		)
+    def FlushCache(self, *args, ctx, request, **kwargs):
+        return self._make_request(
+            url="/twirp/comfo.api.Comfo/FlushCache",
+            ctx=ctx,
+            request=request,
+            response_obj=_sym_db.GetSymbol("comfo.api.FlushCacheResponse"),
+            **kwargs,
+        )
