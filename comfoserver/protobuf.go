@@ -8,6 +8,7 @@ type CacheType = rpc.FlushCacheRequest_CacheType
 
 const (
 	BootInfo = rpc.FlushCacheRequest_BootInfo
+	Bypass   = rpc.FlushCacheRequest_Bypass
 	Fans     = rpc.FlushCacheRequest_Fans
 	Temps    = rpc.FlushCacheRequest_Temps
 	Profiles = rpc.FlushCacheRequest_Profiles
@@ -26,6 +27,21 @@ func (b *BootInfoCache) Protobuf() *rpc.BootInfo {
 		MajorVersion: uint32(b.MajorVersion),
 		MinorVersion: uint32(b.MinorVersion),
 		DeviceName:   b.DeviceName,
+	}
+}
+
+// Protobuf takes out a lock on the FanCache and
+// returns a protobuf representation of Bypass.
+func (b *BypassCache) Protobuf() (pb *rpc.Bypass) {
+
+	b.CacheLock.Lock()
+	defer b.CacheLock.Unlock()
+
+	return &rpc.Bypass{
+		Correction: uint32(b.Correction),
+		Factor:     uint32(b.Factor),
+		Level:      uint32(b.Level),
+		SummerMode: bool(b.SummerMode),
 	}
 }
 

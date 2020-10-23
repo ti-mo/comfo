@@ -8,7 +8,7 @@ message Noop {}
 service Comfo {
   rpc GetBootInfo(Noop) returns (BootInfo);
   rpc GetTemps(Noop) returns (Temps);
-  // rpc GetBypass(Noop) returns (Bypass);
+  rpc GetBypass(Noop) returns (Bypass);
   rpc GetFans(Noop) returns (Fans);
   rpc GetFanProfiles(Noop) returns (FanProfiles);
   // rpc GetHours(Noop) returns (Hours);
@@ -127,6 +127,7 @@ message FlushCacheRequest {
     Fans = 1;
     Temps = 2;
     Profiles = 3;
+    Bypass = 4;
     All = 10;
   }
 

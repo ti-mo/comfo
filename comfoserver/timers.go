@@ -1,17 +1,23 @@
 package comfoserver
 
 import (
+	"io"
 	"log"
 	"time"
-	"io"
 )
 
 var (
+	// 'Fast' cache to be refreshed every 5 seconds.
 	fastCacheTimer time.Ticker
-	fastCacheStale = time.Second * 2
+	fastCacheStale = time.Second * 5
 
+	// Slower caching tier for data to be polled every 5 minutes.
 	slowCacheTimer time.Ticker
 	slowCacheStale = time.Minute * 5
+
+	// Data that rarely changes, eg. bootinfo and errors.
+	glacialCacheTimer time.Ticker
+	glacialCacheStale = time.Hour
 )
 
 // StartCaches initializes the data caches,
@@ -28,6 +34,7 @@ func StartCaches(conn io.ReadWriteCloser) {
 	// Initialize both cache timers to their respective staleness thresholds
 	fastCacheTimer = *time.NewTicker(fastCacheStale)
 	slowCacheTimer = *time.NewTicker(slowCacheStale)
+	glacialCacheTimer = *time.NewTicker(glacialCacheStale)
 
 	// Start cache worker
 	go CacheWorker()
@@ -42,12 +49,14 @@ func CacheWorker() {
 	for {
 		select {
 		case <-fastCacheTimer.C:
-			// Update short-lived caches
 			tempCache.Update(false)
 			fanCache.Update(false)
 		case <-slowCacheTimer.C:
-			// Update long-lived caches
 			fanProfilesCache.Update(false)
+			bypassCache.Update(false)
+		case <-glacialCacheTimer.C:
+			bootInfoCache.Update(false)
+			errorsCache.Update(false)
 		case c := <-flushCache:
 			FlushCaches(c)
 		}
