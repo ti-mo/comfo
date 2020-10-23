@@ -30,6 +30,13 @@ class ComfoServer(TwirpServer):
 				input=_sym_db.GetSymbol("comfo.api.Noop"),
 				output=_sym_db.GetSymbol("comfo.api.Temps"),
 			),
+			"GetBypass": Endpoint(
+				service_name="Comfo",
+				name="GetBypass",
+				function=getattr(service, "GetBypass"),
+				input=_sym_db.GetSymbol("comfo.api.Noop"),
+				output=_sym_db.GetSymbol("comfo.api.Bypass"),
+			),
 			"GetFans": Endpoint(
 				service_name="Comfo",
 				name="GetFans",
@@ -98,6 +105,15 @@ class ComfoClient(TwirpClient):
 			ctx=ctx,
 			request=request,
 			response_obj=_sym_db.GetSymbol("comfo.api.Temps"),
+			**kwargs,
+		)
+
+	def GetBypass(self, *args, ctx, request, **kwargs):
+		return self._make_request(
+			url="/twirp/comfo.api.Comfo/GetBypass",
+			ctx=ctx,
+			request=request,
+			response_obj=_sym_db.GetSymbol("comfo.api.Bypass"),
 			**kwargs,
 		)
 
