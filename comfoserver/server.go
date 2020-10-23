@@ -34,6 +34,11 @@ func (s *Server) GetBootInfo(context.Context, *rpc.Noop) (*rpc.BootInfo, error) 
 	return bootInfoCache.Protobuf(), nil
 }
 
+// GetBypass returns a cached Bypass protobuf.
+func (s *Server) GetBypass(context.Context, *rpc.Noop) (*rpc.Bypass, error) {
+	return bypassCache.Protobuf(), nil
+}
+
 // GetErrors returns a cached Errors protobuf.
 func (s *Server) GetErrors(context.Context, *rpc.Noop) (*rpc.Errors, error) {
 	return errorsCache.Protobuf(), nil

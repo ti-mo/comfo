@@ -13,6 +13,7 @@ var (
 	comfoConn io.ReadWriteCloser
 
 	bootInfoCache    BootInfoCache
+	bypassCache      BypassCache
 	tempCache        TempCache
 	fanCache         FanCache
 	fanProfilesCache FanProfilesCache
@@ -25,6 +26,13 @@ var (
 // BootInfoCache wraps libcomfo's BootInfo structure with caching data.
 type BootInfoCache struct {
 	libcomfo.BootInfo
+	LastUpdated time.Time  `json:"last_updated"`
+	CacheLock   sync.Mutex `json:"-"`
+}
+
+// BypassCache wraps libcomfo's Bypass structure with caching data.
+type BypassCache struct {
+	libcomfo.Bypass
 	LastUpdated time.Time  `json:"last_updated"`
 	CacheLock   sync.Mutex `json:"-"`
 }
@@ -62,6 +70,7 @@ type ErrorsCache struct {
 // refreshed continuously (eg. BootInfo).
 func UpdateCaches(force bool) {
 	bootInfoCache.Update(force)
+	bypassCache.Update(force)
 	tempCache.Update(force)
 	fanCache.Update(force)
 	fanProfilesCache.Update(force)
@@ -74,6 +83,9 @@ func FlushCaches(cache CacheType) {
 	switch cache {
 	case BootInfo:
 		bootInfoCache.Update(true)
+		flushSuccess <- true
+	case Bypass:
+		bypassCache.Update(true)
 		flushSuccess <- true
 	case Fans:
 		fanCache.Update(true)
@@ -116,6 +128,33 @@ func (bc *BootInfoCache) Update(force bool) {
 		bc.LastUpdated = now
 	} else {
 		log.Printf("BootInfoCache.Update() - Error updating boot info cache: %s", err)
+	}
+}
+
+// Update executes a libcomfo query to fetch information about the unit's
+// heat exchanger bypass. It sets LastUpdated on the cache object.
+// The force parameter ignores the staleness check and updates anyway.
+func (bc *BypassCache) Update(force bool) {
+
+	// Lock the cache object.
+	bc.CacheLock.Lock()
+	defer bc.CacheLock.Unlock()
+
+	// Freeze transaction time to start of method.
+	now := time.Now()
+
+	// Do not update cache if we're not forced to
+	// and if the update is not due yet.
+	if !force && !isStale(bc.LastUpdated, now) {
+		return
+	}
+
+	// Call out to the unit and update object.
+	if gb, err := libcomfo.GetBypass(comfoConn); err == nil {
+		bc.Bypass = gb
+		bc.LastUpdated = now
+	} else {
+		log.Printf("BypassCache.Update() - Error updating bypass cache: %s", err)
 	}
 }
 
