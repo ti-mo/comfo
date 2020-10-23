@@ -127,6 +127,7 @@ message FlushCacheRequest {
     Fans = 1;
     Temps = 2;
     Profiles = 3;
+    Bypass = 4;
     All = 10;
   }
 
