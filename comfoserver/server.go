@@ -117,10 +117,11 @@ func (s *Server) SetFanSpeed(ctx context.Context, fst *rpc.FanSpeedTarget) (*rpc
 	// Initialize speed values
 	origSpeed := fanProfilesCache.CurrentMode
 
-	// Apply action string to original speed
+	// Apply action string to original speed.
+	// modifySpeed already returns a Twirp error, don't wrap.
 	tgtSpeed, err := modifySpeed(origSpeed, fst)
 	if err != nil {
-		return nil, twirp.InternalError(err.Error())
+		return nil, err
 	}
 
 	// Only send actions to the unit if speed needs to be modified
