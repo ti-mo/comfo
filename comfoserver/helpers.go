@@ -12,8 +12,8 @@ import (
 // will default to a relative speed decrease.
 func modifySpeed(baseSpeed uint8, target *rpc.FanSpeedTarget) (tgtSpeed uint8, err error) {
 
-	// Unit has 4 speed settings
-	// 0 means auto, we don't use it
+	// Unit has 5 speed settings, but 0 means auto.
+	// We don't use it in the API, but libcomfo does support it.
 	var lowerBound uint8 = 1
 	var upperBound uint8 = 4
 

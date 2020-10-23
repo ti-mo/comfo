@@ -150,26 +150,34 @@ func (s *Server) SetFanSpeed(ctx context.Context, fst *rpc.FanSpeedTarget) (*rpc
 }
 
 // SetFanProfile sets the speed of a single mode (profile) on the unit.
-// There are 4 profiles on a unit, Away, Low, Mid, High.
+// There are 4 profiles on a unit (Away/Low/Medium/High), represented by 1-4.
 func (s *Server) SetFanProfile(ctx context.Context, fpt *rpc.FanProfileTarget) (*rpc.FanProfileModified, error) {
 
 	start := time.Now()
+	mode := uint8(fpt.GetMode())
+	tgtSpeed := uint8(fpt.GetTargetSpeed())
 
-	// Make sure speed mode is valid (0-3)
-	if fpt.GetMode() > 3 {
-		return nil, twirp.InvalidArgumentError("Mode", "(profile) out of range, expected 0-3")
+	// Make sure speed mode is valid (1-4).
+	if mode < 1 || mode > 4 {
+		return nil, twirp.InvalidArgumentError("Mode", "(profile) out of range, expected 1-4")
 	}
 
-	// Make sure the target speed is within range (percent)
-	if fpt.GetTargetSpeed() > 100 {
-		return nil, twirp.InvalidArgumentError("TargetSpeed", "too large, max. 100 (percentage)")
+	// The fan speed selector (see `SetFanSpeed()`) has 5 options, 0 being 'auto'.
+	// We don't support 'auto' in the API, so we've decided to address both the fan speed
+	// as well as the fan profile ID with integers ranging 1-4.
+	// However, the serial protocol with the unit still expects 0-3 for modifying profiles,
+	// so decrease the mode ID by one here after checking the input above.
+	mode--
+
+	// Make sure the target speed is within range (percent).
+	// The unit allows values as low as 0 to be set, but will never ramp the fan as low.
+	// In order to avoid discrepancies, require speeds to range between 15 and 100.
+	if tgtSpeed < 15 || tgtSpeed > 100 {
+		return nil, twirp.InvalidArgumentError("TargetSpeed", "out of range, expected 15-100 (percentage)")
 	}
 
 	var modified bool
 	var origSpeed uint8
-
-	mode := uint8(fpt.GetMode())
-	tgtSpeed := uint8(fpt.GetTargetSpeed())
 
 	// Lock the fan speed mutex before reading from the cache
 	fanLock.Lock()
@@ -185,11 +193,13 @@ func (s *Server) SetFanProfile(ctx context.Context, fpt *rpc.FanProfileTarget) (
 		origSpeed = fanProfilesCache.InMid
 	case 3:
 		origSpeed = fanProfilesCache.InHigh
+	default:
+		panic(fmt.Sprintf("unknown fan profile %d", mode))
 	}
 
-	// Modify speed if different
+	// Modify speed if different.
 	if origSpeed != tgtSpeed {
-		// Send profile command to unit
+		// Send profile command to unit.
 		err := libcomfo.SetFanProfile(mode, tgtSpeed, comfoConn)
 		if err != nil {
 			return nil, twirp.InternalErrorWith(err)
