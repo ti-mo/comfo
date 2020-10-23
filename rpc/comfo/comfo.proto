@@ -17,7 +17,6 @@ service Comfo {
   rpc SetFanSpeed(FanSpeedTarget) returns (FanSpeedModified);
   rpc SetComfortTemp(ComfortTarget) returns (ComfortModified);
   rpc SetFanProfile(FanProfileTarget) returns (FanProfileModified);
-  // rpc SetFanProfiles(FanProfiles) returns (FanProfilesModified);
 
   rpc FlushCache(FlushCacheRequest) returns (FlushCacheResponse);
 }
