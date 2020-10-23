@@ -197,9 +197,9 @@ func (fc *FanCache) UpdatePoll(count int, tgtSpeed uint8) error {
 			return nil
 		}
 
-		// On my unit, I'm seeing multiple hundreds of ms of delay
-		// of the speed readings on the fan unit, so wait between polls
-		time.Sleep(time.Millisecond * 400)
+		// On my unit, fetching speed readings can take hundreds of ms,
+		// so be gentle in trying to obtain updates.
+		time.Sleep(time.Millisecond * 500)
 	}
 
 	return errSetPollFailed
