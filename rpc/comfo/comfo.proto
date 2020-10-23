@@ -73,8 +73,8 @@ message FanProfiles {
 }
 
 message FanProfileTarget {
-  uint32 Mode = 1;
-  uint32 TargetSpeed = 2;
+  uint32 Mode = 1;        // The profile to configure (1-4).
+  uint32 TargetSpeed = 2; // The target speed in percent.
 }
 
 message FanProfileModified {
@@ -84,10 +84,12 @@ message FanProfileModified {
   string ReqTime = 4;       // Total time spent processing the back-end request.
 }
 
-// Abs and Rel are mutually exclusive
+// Abs can be set to activate a specific profile.
+// Rel activates the next (higher) profile when True, lower when False.
+// Abs and Rel are mutually exclusive.
 message FanSpeedTarget {
-  uint32 Abs = 1; // must be between 1 and 4
-  bool Rel = 2;   // False = down, True = up
+  uint32 Abs = 1; // The profile to activate (1-4).
+  bool Rel = 2;   // Set False to step down, True to step up.
 }
 
 message FanSpeedModified {
