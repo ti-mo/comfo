@@ -86,6 +86,10 @@ func (s *Server) SetComfortTemp(ctx context.Context, ct *rpc.ComfortTarget) (*rp
 			return nil, twirp.InternalError(err.Error())
 		}
 
+		// Flush the temperature cache after a successful update.
+		// New comfort temperature value is immediately reflected in a query.
+		tempCache.Update(true)
+
 		modified = true
 	}
 
