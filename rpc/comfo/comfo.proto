@@ -114,7 +114,7 @@ message Temps {
   float Comfort = 1;
   float OutsideAir = 2;
   float SupplyAir = 3;
-  float OutAir = 4;
+  float InsideAir = 4;
   float ExhaustAir = 5;
   float GeoHeat = 6;
   float Reheating = 7;

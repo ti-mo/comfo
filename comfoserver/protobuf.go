@@ -56,7 +56,7 @@ func (t *TempCache) Protobuf() (pb *rpc.Temps) {
 		Comfort:     float32(t.Comfort),
 		OutsideAir:  float32(t.OutsideAir),
 		SupplyAir:   float32(t.SupplyAir),
-		OutAir:      float32(t.OutAir),
+		InsideAir:   float32(t.InsideAir),
 		ExhaustAir:  float32(t.ExhaustAir),
 		GeoHeat:     float32(t.GeoHeat),
 		Reheating:   float32(t.Reheating),
