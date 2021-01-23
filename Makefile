@@ -25,9 +25,10 @@ endif
 $(BINARY): $(SOURCES) $(RPC_GEN)
 	CGO_ENABLED=0 go build ${LDFLAGS} -o ${BINARY}
 
-generate: $(RPC_GEN)
-$(RPC_GEN): rpc/comfo/comfo.proto
+.PHONY: generate
+generate: rpc/comfo/gen.go rpc/comfo/comfo.proto
 	go generate ./...
+	black python/
 
 .PHONY: clean
 clean:
@@ -73,8 +74,14 @@ check: test cover
 	megacheck ./...
 	golint -set_exit_status ./...
 
+.PHONY: pybuild
+pybuild:
+	cd python; python setup.py sdist bdist_wheel
+	@sh -c "echo 'Built Python packages:' python/dist/*.whl"
+	@sh -c "echo 'Built Python source archives:' python/dist/*.tar.gz"
+
 .PHONY: release
-release: clean_release
+release: clean_release pybuild
 	@CGO_ENABLED=0 GOARCH=amd64 go build ${LDFLAGS} -o "${BINARY}_linux_amd64"
 	@CGO_ENABLED=0 GOARCH=arm go build ${LDFLAGS} -o "${BINARY}_linux_arm"
 
