@@ -54,7 +54,7 @@ type Temps struct {
 	Comfort     temperature `json:"comfort"`
 	OutsideAir  temperature `json:"outside_air"`
 	SupplyAir   temperature `json:"supply_air"`
-	OutAir      temperature `json:"out_air"`
+	InsideAir   temperature `json:"inside_air"`
 	ExhaustAir  temperature `json:"exhaust_air"`
 	GeoHeat     temperature `json:"geo_heat"`
 	Reheating   temperature `json:"reheating"`
@@ -75,7 +75,7 @@ func (t *Temps) UnmarshalBinary(in []byte) error {
 	t.Comfort.UnmarshalBinary(in[0])
 	t.OutsideAir.UnmarshalBinary(in[1])
 	t.SupplyAir.UnmarshalBinary(in[2])
-	t.OutAir.UnmarshalBinary(in[3])
+	t.InsideAir.UnmarshalBinary(in[3])
 	t.ExhaustAir.UnmarshalBinary(in[4])
 	t.GeoHeat.UnmarshalBinary(in[6])
 	t.Reheating.UnmarshalBinary(in[7])

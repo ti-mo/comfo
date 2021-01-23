@@ -123,7 +123,7 @@ func TestAllUnmarshalBinary(t *testing.T) {
 				Comfort:     13,
 				OutsideAir:  37,
 				SupplyAir:   13,
-				OutAir:      37,
+				InsideAir:   37,
 				ExhaustAir:  13,
 				GeoHeat:     37,
 				Reheating:   13,
