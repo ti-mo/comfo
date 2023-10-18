@@ -28,7 +28,6 @@ $(BINARY): $(SOURCES) $(RPC_GEN)
 .PHONY: generate
 generate: rpc/comfo/gen.go rpc/comfo/comfo.proto
 	go generate ./...
-	black python/
 
 .PHONY: clean
 clean:
