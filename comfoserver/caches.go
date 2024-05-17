@@ -2,7 +2,7 @@ package comfoserver
 
 import (
 	"io"
-	"log"
+	"log/slog"
 	"sync"
 	"time"
 
@@ -127,7 +127,7 @@ func (bc *BootInfoCache) Update(force bool) {
 		bc.BootInfo = gb
 		bc.LastUpdated = now
 	} else {
-		log.Printf("BootInfoCache.Update() - Error updating boot info cache: %s", err)
+		slog.Error("BootInfoCache.Update() - Updating boot info cache", "error", err)
 	}
 }
 
@@ -154,7 +154,7 @@ func (bc *BypassCache) Update(force bool) {
 		bc.Bypass = gb
 		bc.LastUpdated = now
 	} else {
-		log.Printf("BypassCache.Update() - Error updating bypass cache: %s", err)
+		slog.Error("BypassCache.Update() - Updating bypass cache", "error", err)
 	}
 }
 
@@ -181,7 +181,7 @@ func (tc *TempCache) Update(force bool) {
 		tc.Temps = gt
 		tc.LastUpdated = now
 	} else {
-		log.Printf("TempCache.Update() - Error updating temperature cache: %s", err)
+		slog.Error("TempCache.Update() - Updating temperature cache", "error", err)
 	}
 }
 
@@ -208,7 +208,7 @@ func (fc *FanCache) Update(force bool) {
 		fc.Fans = gf
 		fc.LastUpdated = now
 	} else {
-		log.Printf("FanCache.Update() - Error updating fan cache: %s", err)
+		slog.Error("FanCache.Update() - Updating fan cache", "error", err)
 	}
 }
 
@@ -267,7 +267,7 @@ func (fpc *FanProfilesCache) Update(force bool) {
 		fpc.FanProfiles = fp
 		fpc.LastUpdated = now
 	} else {
-		log.Printf("FanProfilesCache.Update() - Error updating fan profiles cache: %s", err)
+		slog.Error("FanProfilesCache.Update() - Updating fan profiles cache", "error", err)
 	}
 }
 
@@ -294,7 +294,7 @@ func (ec *ErrorsCache) Update(force bool) {
 		ec.Errors = e
 		ec.LastUpdated = now
 	} else {
-		log.Printf("Errors.Update() - Error updating errors cache: %s", err)
+		slog.Error("Errors.Update() - Updating errors cache", "error", err)
 	}
 }
 

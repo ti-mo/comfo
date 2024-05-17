@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/ti-mo/comfo/comfoserver"
@@ -35,12 +36,21 @@ func main() {
 	viper.SetEnvPrefix("comfo")
 	viper.AutomaticEnv()
 
+	// Configure logging.
+	level := slog.LevelInfo
+	if viper.GetBool(configDebug) {
+		level = slog.LevelDebug
+	}
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: level}))
+	slog.SetDefault(logger)
+	slog.Debug("Debug logging enabled")
+
 	// Open connection to unit
 	c, err := ConnectUnit(viper.GetString(configMode), viper.GetString(configTarget))
 	if err != nil {
-		log.Fatalln("Error connecting to unit:", err)
+		slog.Error("Error connecting to unit", "error", err)
+		os.Exit(1)
 	}
-
 	defer c.Close()
 
 	// Initialize and start cache timers
@@ -56,39 +66,41 @@ func main() {
 		ReadTimeout:  5 * time.Second,
 	}
 
-	log.Println("API listening on", viper.GetString(configListen))
+	slog.Info("API listening", "address", viper.GetString(configListen))
 
-	log.Fatal(srv.ListenAndServe())
+	if err := srv.ListenAndServe(); err != nil {
+		slog.Error("ListenAndServe", "error", err)
+		os.Exit(1)
+	}
 }
 
 // ConnectUnit sets up a connection to the unit over TCP or Serial.
 func ConnectUnit(mode string, unit string) (conn io.ReadWriteCloser, err error) {
-
 	switch mode {
 	case "tcp":
 		// Establish TCP connection
-		log.Printf("Connecting to the unit over tcp at %v ..", unit)
+		slog.Info("Connecting to the unit over tcp", "address", unit)
 
 		conn, err = net.Dial("tcp", unit)
 		if err != nil {
-			log.Fatalf("unable to dial the unit at %v: %v", unit, err)
+			return nil, fmt.Errorf("unable to dial the unit at %s: %w", unit, err)
 		}
 
-		log.Printf("Connection to %v established!", unit)
+		slog.Info("Connection established!", "address", unit)
 
 	case "serial":
 		// Establish serial connection
-		log.Printf("Opening serial device %v ..", unit)
+		slog.Info("Opening serial device", "device", unit)
 
 		conn, err = serial.OpenPort(&serial.Config{Name: unit, Baud: 9600})
 		if err != nil {
-			log.Fatalf("unable to open serial device at %v: %v", unit, err)
+			return nil, fmt.Errorf("unable to open serial device at %s: %w", unit, err)
 		}
 
-		log.Printf("Opened device %v!", unit)
+		slog.Info("Opened device", "device", unit)
 
 	default:
-		log.Fatalf("unsupported unit mode %v", mode)
+		return nil, fmt.Errorf("unsupported unit mode %s", mode)
 	}
 
 	return

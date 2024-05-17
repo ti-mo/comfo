@@ -2,7 +2,7 @@ package comfoserver
 
 import (
 	"io"
-	"log"
+	"log/slog"
 	"time"
 )
 
@@ -26,7 +26,7 @@ func StartCaches(conn io.ReadWriteCloser) {
 
 	comfoConn = conn
 
-	log.Println("Updating initial caches.")
+	slog.Info("Populating caches")
 
 	// Pull in first data into caches
 	UpdateCaches(true)
@@ -39,7 +39,7 @@ func StartCaches(conn io.ReadWriteCloser) {
 	// Start cache worker
 	go CacheWorker()
 
-	log.Println("Started cache worker.")
+	slog.Info("Cache worker started")
 }
 
 // CacheWorker is responsible for keeping the application
